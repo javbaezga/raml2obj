@@ -141,14 +141,27 @@ module.exports = makeConsistent;
 
 'use strict';
 
-// const tools = require('datatype-expansion');
+/**
+ * This library is meant to work in browser. It's hidden dependency is
+ * https://github.com/raml-org/raml-parser-toolbelt
+ * This library require to include it's browser/index.js script included into the document.
+ * Then the `datatype_expansion.js` global variable will be available which is used
+ * to extend RAML properties.
+ *
+ * Compering to original library it is also missing a raml js parser. In ARC this library
+ * is used alongside own RAML parser implementation.
+ *
+ * Use `npm run browser` to build the script in `./build` folder. Final library if the
+ * `raml2object.js`. It exposes `window.raml2object.parse` function to be used with parser output.
+ */
+/* global datatype_expansion */
 const makeExamplesAndTypesConsistent = require('./consistency-helpers');
-const { arraysToObjects, recursiveObjectToArray } = require('./arrays-objects-helpers');
+const {arraysToObjects, recursiveObjectToArray} = require('./arrays-objects-helpers');
 
 function _makeUniqueId(string) {
-  const stringWithSpacesReplaced = string.replace(/\W/g, '_');
-  const stringWithLeadingUnderscoreRemoved = stringWithSpacesReplaced.replace(new RegExp('^_+'), '');
-  return stringWithLeadingUnderscoreRemoved.toLowerCase();
+  string = string.replace(/\W/g, '_');
+  string = string.replace(new RegExp('^_+'), '');
+  return string.toLowerCase();
 }
 
 // Add unique id's and parent URL's plus parent URI parameters to resources
@@ -165,7 +178,7 @@ function _addRaml2htmlProperties(ramlObj, parentUrl, allUriParameters, baseUri) 
   }
 
   baseUri = baseUri || ramlObj.baseUri;
-  if (baseUri[baseUri.length - 1] === '/') {
+  if (baseUri && baseUri[baseUri.length - 1] === '/') {
     baseUri = baseUri.substr(0, baseUri.length - 1);
   }
 
@@ -194,13 +207,15 @@ function _addRaml2htmlProperties(ramlObj, parentUrl, allUriParameters, baseUri) 
       });
     }
 
-    _addRaml2htmlProperties(resource, resource.parentUrl + resource.relativeUri, resource.allUriParameters, baseUri);
+    _addRaml2htmlProperties(resource, resource.parentUrl + resource.relativeUri,
+      resource.allUriParameters, baseUri);
   });
 
   return ramlObj;
 }
 
-// This uses the datatype-expansion library to expand all the root type to their canonical expanded form
+// This uses the datatype-expansion library to expand all the root type to their canonical
+// expanded form
 function _expandRootTypes(types) {
   if (!types) {
     return types;
@@ -221,7 +236,8 @@ function _expandRootTypes(types) {
 }
 
 function _enhanceRamlObj(ramlObj) {
-  // Some of the structures (like `types`) are an array that hold key/value pairs, which is very annoying to work with.
+  // Some of the structures (like `types`) are an array that hold key/value pairs, which is
+  // very annoying to work with.
   // Let's make them into a simple object, this makes it easy to use them for direct lookups.
   //
   // EXAMPLE of these structures:
@@ -234,7 +250,8 @@ function _enhanceRamlObj(ramlObj) {
   // { foo: { ... }, bar: { ... } }
   ramlObj = arraysToObjects(ramlObj);
 
-  // We want to expand inherited root types, so that later on when we copy type properties into an object,
+  // We want to expand inherited root types, so that later on when we copy type properties
+  // into an object,
   // we get the full graph.
   // Delete the types from the ramlObj so it's not processed again later on.
   const types = makeExamplesAndTypesConsistent(_expandRootTypes(ramlObj.types));
@@ -261,7 +278,8 @@ function _enhanceRamlObj(ramlObj) {
   // [ { name: "foo!", key: "foo" }, { name: "bar", key: "bar" } ]
   ramlObj = recursiveObjectToArray(ramlObj);
 
-  // Now add all the properties and things that we need for raml2html, stuff like the uniqueId, parentUrl,
+  // Now add all the properties and things that we need for raml2html,
+  // stuff like the uniqueId, parentUrl,
   // and allUriParameters.
   ramlObj = _addRaml2htmlProperties(ramlObj);
 
@@ -271,7 +289,7 @@ function _enhanceRamlObj(ramlObj) {
 
   return ramlObj;
 }
-module.exports.parse = function (source) {
+module.exports.parse = function(source) {
   return _enhanceRamlObj(source);
 };
 
