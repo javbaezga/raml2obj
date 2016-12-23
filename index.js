@@ -39,7 +39,7 @@ function _addRaml2htmlProperties(ramlObj, parentUrl, allUriParameters, baseUri) 
   }
 
   baseUri = baseUri || ramlObj.baseUri;
-  if (baseUri[baseUri.length - 1] === '/') {
+  if (baseUri && baseUri[baseUri.length - 1] === '/') {
     baseUri = baseUri.substr(0, baseUri.length - 1);
   }
 
