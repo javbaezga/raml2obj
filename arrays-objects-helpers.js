@@ -50,7 +50,8 @@ function recursiveObjectToArray(obj) {
   if (_isObject(obj)) {
     Object.keys(obj).forEach((key) => {
       const value = obj[key];
-      if (_isObject(obj) && ['responses', 'body', 'queryParameters', 'headers', 'properties', 'baseUriParameters', 'annotations', 'uriParameters'].indexOf(key) !== -1) {
+      if (_isObject(obj) && ['responses', 'body', 'queryParameters', 'headers', 'properties',
+        'baseUriParameters', 'annotations', 'uriParameters'].indexOf(key) !== -1) {
         obj[key] = _objectToArray(value);
       }
 
