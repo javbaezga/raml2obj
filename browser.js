@@ -1,2 +1,8 @@
 const raml2obj = require('./');
-window.raml2obj = raml2obj;
+/* global self */
+if (typeof window === 'undefined') {
+  // Web worker environment.
+  self.raml2obj = raml2obj;
+} else {
+  window.raml2obj = raml2obj;
+}

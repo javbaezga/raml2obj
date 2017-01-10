@@ -85,7 +85,13 @@ module.exports = {
 
 },{}],2:[function(require,module,exports){
 const raml2obj = require('./');
-window.raml2obj = raml2obj;
+/* global self */
+if (typeof window === 'undefined') {
+  // Web worker environment.
+  self.raml2obj = raml2obj;
+} else {
+  window.raml2obj = raml2obj;
+}
 
 },{"./":4}],3:[function(require,module,exports){
 function _isObject(obj) {

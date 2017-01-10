@@ -101,7 +101,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     };
   }, {}], 2: [function (require, module, exports) {
     var raml2obj = require('./');
-    window.raml2obj = raml2obj;
+    /* global self */
+    if (typeof window === 'undefined') {
+      // Web worker environment.
+      self.raml2obj = raml2obj;
+    } else {
+      window.raml2obj = raml2obj;
+    }
   }, { "./": 4 }], 3: [function (require, module, exports) {
     function _isObject(obj) {
       return obj === Object(obj);
