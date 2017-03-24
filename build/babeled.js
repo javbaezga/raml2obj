@@ -91,7 +91,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           ramlObj[key] = _arrayToObject(ramlObj[key]);
         }
       });
-
       return ramlObj;
     }
 
@@ -193,15 +192,58 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       _createClass(Raml2Object, [{
         key: "enhance",
         value: function enhance() {
+          if (performance && performance.mark) {
+            performance.mark('raml2obj-enhace-start');
+          }
+          if (performance && performance.mark) {
+            performance.mark('raml2obj-arrays-to-object-start');
+          }
           arraysToObjects(this.raml);
-          var types = makeConsistent(this.expandRootTypes(this.raml.types));
+          if (performance && performance.mark) {
+            performance.mark('raml2obj-arrays-to-object-end');
+          }
+          if (performance && performance.mark) {
+            performance.mark('raml2obj-expanding-root-types-start');
+          }
+          var expanded = this.expandRootTypes(this.raml.types);
+          if (performance && performance.mark) {
+            performance.mark('raml2obj-expanding-root-types-end');
+          }
+          if (performance && performance.mark) {
+            performance.mark('raml2obj-make-consistent-root-types-start');
+          }
+          var types = makeConsistent(expanded);
+          if (performance && performance.mark) {
+            performance.mark('raml2obj-make-consistent-root-types-end');
+          }
           delete this.raml.types;
+          if (performance && performance.mark) {
+            performance.mark('raml2obj-make-consistent-raml-start');
+          }
           makeConsistent(this.raml, types);
+          if (performance && performance.mark) {
+            performance.mark('raml2obj-make-consistent-raml-end');
+          }
+          if (performance && performance.mark) {
+            performance.mark('raml2obj-recursive-object-to-array-start');
+          }
           recursiveObjectToArray(this.raml);
+          if (performance && performance.mark) {
+            performance.mark('raml2obj-recursive-object-to-array-end');
+          }
           this.securitySchemes = this.raml.securitySchemes;
+          if (performance && performance.mark) {
+            performance.mark('raml2obj-apply-raml-types-start');
+          }
           this.applyRamlTypes(this.raml);
+          if (performance && performance.mark) {
+            performance.mark('raml2obj-apply-raml-types-end');
+          }
           if (types) {
             this.raml.types = types;
+          }
+          if (performance && performance.mark) {
+            performance.mark('raml2obj-enhace-end');
           }
           return this.raml;
         }

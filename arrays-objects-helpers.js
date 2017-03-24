@@ -73,7 +73,6 @@ function arraysToObjects(ramlObj) {
       ramlObj[key] = _arrayToObject(ramlObj[key]);
     }
   });
-
   return ramlObj;
 }
 
