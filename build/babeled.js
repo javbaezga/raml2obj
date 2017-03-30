@@ -188,64 +188,58 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         this.raml = object;
       }
+      /**
+       * Uses the performance API to mark time for an event.
+       */
+
 
       _createClass(Raml2Object, [{
+        key: "mark",
+        value: function mark(title) {
+          if (performance && performance.mark) {
+            performance.mark(title);
+          }
+        }
+
+        /**
+         * Enchances RAML's JSON parser output by normalizing data type structure and
+         * by expanding types definition useing the datatype_expansion library.
+         *
+         * @return {Promise} Fulfilled object with enhanced RAML JSON structure.
+         */
+
+      }, {
         key: "enhance",
         value: function enhance() {
-          if (performance && performance.mark) {
-            performance.mark('raml2obj-enhace-start');
-          }
-          if (performance && performance.mark) {
-            performance.mark('raml2obj-arrays-to-object-start');
-          }
+          var _this = this;
+
+          this.mark('raml2obj-enhace-start');
+          this.mark('raml2obj-arrays-to-object-start');
           arraysToObjects(this.raml);
-          if (performance && performance.mark) {
-            performance.mark('raml2obj-arrays-to-object-end');
-          }
-          if (performance && performance.mark) {
-            performance.mark('raml2obj-expanding-root-types-start');
-          }
-          var expanded = this.expandRootTypes(this.raml.types);
-          if (performance && performance.mark) {
-            performance.mark('raml2obj-expanding-root-types-end');
-          }
-          if (performance && performance.mark) {
-            performance.mark('raml2obj-make-consistent-root-types-start');
-          }
-          var types = makeConsistent(expanded);
-          if (performance && performance.mark) {
-            performance.mark('raml2obj-make-consistent-root-types-end');
-          }
-          delete this.raml.types;
-          if (performance && performance.mark) {
-            performance.mark('raml2obj-make-consistent-raml-start');
-          }
-          makeConsistent(this.raml, types);
-          if (performance && performance.mark) {
-            performance.mark('raml2obj-make-consistent-raml-end');
-          }
-          if (performance && performance.mark) {
-            performance.mark('raml2obj-recursive-object-to-array-start');
-          }
-          recursiveObjectToArray(this.raml);
-          if (performance && performance.mark) {
-            performance.mark('raml2obj-recursive-object-to-array-end');
-          }
-          this.securitySchemes = this.raml.securitySchemes;
-          if (performance && performance.mark) {
-            performance.mark('raml2obj-apply-raml-types-start');
-          }
-          this.applyRamlTypes(this.raml);
-          if (performance && performance.mark) {
-            performance.mark('raml2obj-apply-raml-types-end');
-          }
-          if (types) {
-            this.raml.types = types;
-          }
-          if (performance && performance.mark) {
-            performance.mark('raml2obj-enhace-end');
-          }
-          return this.raml;
+          this.mark('raml2obj-arrays-to-object-end');
+          this.mark('raml2obj-expanding-root-types-start');
+          return this.expandRootTypes(this.raml.types).then(function (expanded) {
+            _this.mark('raml2obj-expanding-root-types-end');
+            _this.mark('raml2obj-make-consistent-root-types-start');
+            var types = makeConsistent(expanded);
+            _this.mark('raml2obj-make-consistent-root-types-end');
+            delete _this.raml.types;
+            _this.mark('raml2obj-make-consistent-raml-start');
+            makeConsistent(_this.raml, types);
+            _this.mark('raml2obj-make-consistent-raml-end');
+            _this.mark('raml2obj-recursive-object-to-array-start');
+            recursiveObjectToArray(_this.raml);
+            _this.mark('raml2obj-recursive-object-to-array-end');
+            _this.securitySchemes = _this.raml.securitySchemes;
+            _this.mark('raml2obj-apply-raml-types-start');
+            _this.applyRamlTypes(_this.raml);
+            _this.mark('raml2obj-apply-raml-types-end');
+            if (types) {
+              _this.raml.types = types;
+            }
+            _this.mark('raml2obj-enhace-end');
+            return _this.raml;
+          });
         }
 
         /**
@@ -308,6 +302,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           object.responses = responses;
         }
 
+        // Checks if given `obj` is an Object.
+
+      }, {
+        key: "isObject",
+        value: function isObject(obj) {
+          return obj === Object(obj);
+        }
+
         /**
          * Detect and add security scheme definitions to the object.
          * It replaces the id of the security scheme on a resource / method level with
@@ -321,6 +323,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "addSecuritSchemes",
         value: function addSecuritSchemes(object) {
+          var _this2 = this;
+
           var rootSchemes = this.securitySchemes;
           if (!rootSchemes || !Object.keys(rootSchemes).length) {
             return;
@@ -337,6 +341,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 added = true;
                 object.securedBy[i] = rootSchemes[item];
               }
+            } else if (_this2.isObject(item)) {
+              var keys = Object.keys(item);
+              var key = keys[0];
+              if (key in rootSchemes) {
+                added = true;
+                var schema = rootSchemes[key];
+                var params = item[key];
+                schema.settings = Object.assign(schema.settings, params);
+                object.securedBy[i] = schema;
+              }
             }
           });
           if (added) {
@@ -352,7 +366,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "applyRamlTypes",
         value: function applyRamlTypes(ramlObj, parentUrl, allUriParameters) {
-          var _this = this;
+          var _this3 = this;
 
           if (!ramlObj.resources) {
             return;
@@ -375,12 +389,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
               resource.methods.forEach(function (method) {
                 method.allUriParameters = resource.allUriParameters;
                 method.absoluteUri = resource.absoluteUri;
-                _this.addSecuritSchemes(method);
+                _this3.addSecuritSchemes(method);
               });
             }
-            _this.addSecuritSchemes(resource);
+            _this3.addSecuritSchemes(resource);
 
-            _this.applyRamlTypes(resource, resource.parentUrl + resource.relativeUri, resource.allUriParameters);
+            _this3.applyRamlTypes(resource, resource.parentUrl + resource.relativeUri, resource.allUriParameters);
           });
         }
 
@@ -390,24 +404,41 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "expandRootTypes",
         value: function expandRootTypes(types) {
-          if (!types) {
-            return types;
-          }
+          var _this4 = this;
 
-          Object.keys(types).forEach(function (key) {
+          if (!types) {
+            return Promise.resolve(types);
+          }
+          var promises = Object.keys(types).map(function (key) {
+            return _this4._expandType(types, key);
+          });
+          return Promise.all(promises).then(function (results) {
+            results.forEach(function (result) {
+              types[result[0]] = result[1];
+            });
+            return types;
+          });
+        }
+      }, {
+        key: "_expandType",
+        value: function _expandType(types, key) {
+          return new Promise(function (resolve) {
             // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
             datatype_expansion.js.expandedForm(types[key], types, function (err, expanded) {
               if (expanded) {
                 datatype_expansion.js.canonicalForm(expanded, function (err2, canonical) {
                   if (canonical) {
-                    types[key] = canonical;
+                    resolve([key, canonical]);
+                  } else {
+                    resolve([key, types[key]]);
                   }
                 });
+              } else {
+                resolve([key, types[key]]);
               }
             });
             // jscs:enable requireCamelCaseOrUpperCaseIdentifiers
           });
-          return types;
         }
       }]);
 

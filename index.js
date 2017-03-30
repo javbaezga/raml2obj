@@ -21,14 +21,61 @@ class Raml2Object {
 
   constructor(object) {
     this.raml = object;
+    // If set to true it will use the performance API to measure the time of work.
+    // Call `getMeasurement()` to get the list of results.
+    this.debug = false;
   }
   /**
    * Uses the performance API to mark time for an event.
    */
   mark(title) {
-    if (performance && performance.mark) {
+    if (this.debug && performance && performance.mark) {
       performance.mark(title);
     }
+  }
+  /**
+   * Computes times of execution of specific parts of the library.
+   *
+   * Entries names:
+   * - raml2obj-enhace - time to execture the entire enhacement process
+   * - raml2obj-arrays-to-object
+   * - raml2obj-expanding-root-types
+   * - raml2obj-make-consistent-root-types
+   * - raml2obj-make-consistent-raml
+   * - raml2obj-recursive-object-to-array
+   * - raml2obj-apply-raml-types
+   *
+   * @return {Array<PerformanceEntry>} A list of entries. If the `debug` flag is not set to true
+   * the it will return empty list.
+   */
+  getMeasurement() {
+    if (!this.debug) {
+      return [];
+    }
+    try {
+      performance.measure('raml2obj-enhace', 'raml2obj-enhace-start',
+          'raml2obj-enhace-end');
+      performance.measure('raml2obj-arrays-to-object', 'raml2obj-arrays-to-object-start',
+        'raml2obj-arrays-to-object-end');
+      performance.measure('raml2obj-expanding-root-types',
+        'raml2obj-expanding-root-types-start',
+        'raml2obj-expanding-root-types-end');
+      performance.measure('raml2obj-make-consistent-root-types',
+        'raml2obj-make-consistent-root-types-start',
+        'raml2obj-make-consistent-root-types-end');
+      performance.measure('raml2obj-make-consistent-raml',
+        'raml2obj-make-consistent-raml-start',
+        'raml2obj-make-consistent-raml-end');
+      performance.measure('raml2obj-recursive-object-to-array',
+        'raml2obj-recursive-object-to-array-start',
+        'raml2obj-recursive-object-to-array-end');
+      performance.measure('raml2obj-apply-raml-types',
+        'raml2obj-apply-raml-types-start',
+        'raml2obj-apply-raml-types-end');
+    } catch (e) {
+      return [];
+    }
+    return window.performance.getEntriesByType('measure');
   }
 
   /**
@@ -126,6 +173,11 @@ class Raml2Object {
     object.responses = responses;
   }
 
+  // Checks if given `obj` is an Object.
+  isObject(obj) {
+    return obj === Object(obj);
+  }
+
   /**
    * Detect and add security scheme definitions to the object.
    * It replaces the id of the security scheme on a resource / method level with
@@ -151,6 +203,16 @@ class Raml2Object {
         if (item in rootSchemes) {
           added = true;
           object.securedBy[i] = rootSchemes[item];
+        }
+      } else if (this.isObject(item)) {
+        let keys = Object.keys(item);
+        let key = keys[0];
+        if (key in rootSchemes) {
+          added = true;
+          let schema = rootSchemes[key];
+          let params = item[key];
+          schema.settings = Object.assign(schema.settings, params);
+          object.securedBy[i] = schema;
         }
       }
     });
