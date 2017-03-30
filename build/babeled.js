@@ -187,6 +187,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         _classCallCheck(this, Raml2Object);
 
         this.raml = object;
+        // If set to true it will use the performance API to measure the time of work.
+        // Call `getMeasurement()` to get the list of results.
+        this.debug = false;
       }
       /**
        * Uses the performance API to mark time for an event.
@@ -196,9 +199,44 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       _createClass(Raml2Object, [{
         key: "mark",
         value: function mark(title) {
-          if (performance && performance.mark) {
+          if (this.debug && performance && performance.mark) {
             performance.mark(title);
           }
+        }
+        /**
+         * Computes times of execution of specific parts of the library.
+         *
+         * Entries names:
+         * - raml2obj-enhace - time to execture the entire enhacement process
+         * - raml2obj-arrays-to-object
+         * - raml2obj-expanding-root-types
+         * - raml2obj-make-consistent-root-types
+         * - raml2obj-make-consistent-raml
+         * - raml2obj-recursive-object-to-array
+         * - raml2obj-apply-raml-types
+         *
+         * @return {Array<PerformanceEntry>} A list of entries. If the `debug` flag is not set to true
+         * the it will return empty list.
+         */
+
+      }, {
+        key: "getMeasurement",
+        value: function getMeasurement() {
+          if (!this.debug) {
+            return [];
+          }
+          try {
+            performance.measure('raml2obj-enhace', 'raml2obj-enhace-start', 'raml2obj-enhace-end');
+            performance.measure('raml2obj-arrays-to-object', 'raml2obj-arrays-to-object-start', 'raml2obj-arrays-to-object-end');
+            performance.measure('raml2obj-expanding-root-types', 'raml2obj-expanding-root-types-start', 'raml2obj-expanding-root-types-end');
+            performance.measure('raml2obj-make-consistent-root-types', 'raml2obj-make-consistent-root-types-start', 'raml2obj-make-consistent-root-types-end');
+            performance.measure('raml2obj-make-consistent-raml', 'raml2obj-make-consistent-raml-start', 'raml2obj-make-consistent-raml-end');
+            performance.measure('raml2obj-recursive-object-to-array', 'raml2obj-recursive-object-to-array-start', 'raml2obj-recursive-object-to-array-end');
+            performance.measure('raml2obj-apply-raml-types', 'raml2obj-apply-raml-types-start', 'raml2obj-apply-raml-types-end');
+          } catch (e) {
+            return [];
+          }
+          return window.performance.getEntriesByType('measure');
         }
 
         /**
