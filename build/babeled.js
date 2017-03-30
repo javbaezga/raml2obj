@@ -377,16 +377,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             if (typeof item === 'string') {
               if (item in rootSchemes) {
                 added = true;
-                object.securedBy[i] = rootSchemes[item];
+                object.securedBy[i] = Object.assign({}, rootSchemes[item]);
               }
             } else if (_this2.isObject(item)) {
               var keys = Object.keys(item);
               var key = keys[0];
               if (key in rootSchemes) {
                 added = true;
-                var schema = rootSchemes[key];
+                var schema = Object.assign({}, rootSchemes[key]);
                 var params = item[key];
-                schema.settings = Object.assign(schema.settings, params);
+                schema.settings = Object.assign({}, schema.settings, params);
                 object.securedBy[i] = schema;
               }
             }

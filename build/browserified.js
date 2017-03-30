@@ -347,16 +347,16 @@ class Raml2Object {
       if (typeof item === 'string') {
         if (item in rootSchemes) {
           added = true;
-          object.securedBy[i] = rootSchemes[item];
+          object.securedBy[i] = Object.assign({}, rootSchemes[item]);
         }
       } else if (this.isObject(item)) {
         let keys = Object.keys(item);
         let key = keys[0];
         if (key in rootSchemes) {
           added = true;
-          let schema = rootSchemes[key];
+          let schema = Object.assign({}, rootSchemes[key]);
           let params = item[key];
-          schema.settings = Object.assign(schema.settings, params);
+          schema.settings = Object.assign({}, schema.settings, params);
           object.securedBy[i] = schema;
         }
       }
