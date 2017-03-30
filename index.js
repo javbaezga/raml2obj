@@ -22,62 +22,50 @@ class Raml2Object {
   constructor(object) {
     this.raml = object;
   }
+  /**
+   * Uses the performance API to mark time for an event.
+   */
+  mark(title) {
+    if (performance && performance.mark) {
+      performance.mark(title);
+    }
+  }
 
+  /**
+   * Enchances RAML's JSON parser output by normalizing data type structure and
+   * by expanding types definition useing the datatype_expansion library.
+   *
+   * @return {Promise} Fulfilled object with enhanced RAML JSON structure.
+   */
   enhance() {
-    if (performance && performance.mark) {
-      performance.mark('raml2obj-enhace-start');
-    }
-    if (performance && performance.mark) {
-      performance.mark('raml2obj-arrays-to-object-start');
-    }
+    this.mark('raml2obj-enhace-start');
+    this.mark('raml2obj-arrays-to-object-start');
     arraysToObjects(this.raml);
-    if (performance && performance.mark) {
-      performance.mark('raml2obj-arrays-to-object-end');
-    }
-    if (performance && performance.mark) {
-      performance.mark('raml2obj-expanding-root-types-start');
-    }
-    const expanded = this.expandRootTypes(this.raml.types);
-    if (performance && performance.mark) {
-      performance.mark('raml2obj-expanding-root-types-end');
-    }
-    if (performance && performance.mark) {
-      performance.mark('raml2obj-make-consistent-root-types-start');
-    }
-    const types = makeConsistent(expanded);
-    if (performance && performance.mark) {
-      performance.mark('raml2obj-make-consistent-root-types-end');
-    }
-    delete this.raml.types;
-    if (performance && performance.mark) {
-      performance.mark('raml2obj-make-consistent-raml-start');
-    }
-    makeConsistent(this.raml, types);
-    if (performance && performance.mark) {
-      performance.mark('raml2obj-make-consistent-raml-end');
-    }
-    if (performance && performance.mark) {
-      performance.mark('raml2obj-recursive-object-to-array-start');
-    }
-    recursiveObjectToArray(this.raml);
-    if (performance && performance.mark) {
-      performance.mark('raml2obj-recursive-object-to-array-end');
-    }
-    this.securitySchemes = this.raml.securitySchemes;
-    if (performance && performance.mark) {
-      performance.mark('raml2obj-apply-raml-types-start');
-    }
-    this.applyRamlTypes(this.raml);
-    if (performance && performance.mark) {
-      performance.mark('raml2obj-apply-raml-types-end');
-    }
-    if (types) {
-      this.raml.types = types;
-    }
-    if (performance && performance.mark) {
-      performance.mark('raml2obj-enhace-end');
-    }
-    return this.raml;
+    this.mark('raml2obj-arrays-to-object-end');
+    this.mark('raml2obj-expanding-root-types-start');
+    return this.expandRootTypes(this.raml.types)
+    .then((expanded) => {
+      this.mark('raml2obj-expanding-root-types-end');
+      this.mark('raml2obj-make-consistent-root-types-start');
+      const types = makeConsistent(expanded);
+      this.mark('raml2obj-make-consistent-root-types-end');
+      delete this.raml.types;
+      this.mark('raml2obj-make-consistent-raml-start');
+      makeConsistent(this.raml, types);
+      this.mark('raml2obj-make-consistent-raml-end');
+      this.mark('raml2obj-recursive-object-to-array-start');
+      recursiveObjectToArray(this.raml);
+      this.mark('raml2obj-recursive-object-to-array-end');
+      this.securitySchemes = this.raml.securitySchemes;
+      this.mark('raml2obj-apply-raml-types-start');
+      this.applyRamlTypes(this.raml);
+      this.mark('raml2obj-apply-raml-types-end');
+      if (types) {
+        this.raml.types = types;
+      }
+      this.mark('raml2obj-enhace-end');
+      return this.raml;
+    });
   }
 
   /**
@@ -211,23 +199,36 @@ class Raml2Object {
   // expanded form
   expandRootTypes(types) {
     if (!types) {
-      return types;
+      return Promise.resolve(types);
     }
+    var promises = Object.keys(types).map((key) => this._expandType(types, key));
+    return Promise.all(promises)
+    .then((results) => {
+      results.forEach((result) => {
+        types[result[0]] = result[1];
+      });
+      return types;
+    });
+  }
 
-    Object.keys(types).forEach((key) => {
+  _expandType(types, key) {
+    return new Promise((resolve) => {
       // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
       datatype_expansion.js.expandedForm(types[key], types, (err, expanded) => {
         if (expanded) {
           datatype_expansion.js.canonicalForm(expanded, (err2, canonical) => {
             if (canonical) {
-              types[key] = canonical;
+              resolve([key, canonical]);
+            } else {
+              resolve([key, types[key]]);
             }
           });
+        } else {
+          resolve([key, types[key]]);
         }
       });
       // jscs:enable requireCamelCaseOrUpperCaseIdentifiers
     });
-    return types;
   }
 }
 
