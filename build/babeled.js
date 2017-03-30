@@ -236,7 +236,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           } catch (e) {
             return [];
           }
-          return window.performance.getEntriesByType('measure');
+          return performance.getEntriesByType('measure');
         }
 
         /**

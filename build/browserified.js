@@ -220,7 +220,7 @@ class Raml2Object {
     } catch (e) {
       return [];
     }
-    return window.performance.getEntriesByType('measure');
+    return performance.getEntriesByType('measure');
   }
 
   /**
