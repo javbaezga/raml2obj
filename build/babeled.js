@@ -119,8 +119,24 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             obj.type = obj.type[0];
           }
 
-          if (types && types && types[obj.type]) {
+          if (types && types[obj.type]) {
+            var typedef = types[obj.type];
+            var objectExamples = [];
+            if (obj.examples && typedef.examples) {
+              objectExamples = obj.examples;
+            }
+            if (obj.example && typedef.example) {
+              objectExamples.push(obj.example);
+            }
             Object.assign(obj, types[obj.type]);
+            if (objectExamples.length) {
+              if (!obj.examples || !obj.examples.length) {
+                obj.examples = [];
+              }
+              objectExamples.forEach(function (item) {
+                obj.examples.push(item);
+              });
+            }
           }
         }
 
