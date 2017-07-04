@@ -275,6 +275,9 @@ class Raml2Object {
 
   _expandType(types, key) {
     return new Promise((resolve) => {
+      // var datatype_expansion = {
+      //   js: require('datatype-expansion')
+      // };
       // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
       datatype_expansion.js.expandedForm(types[key], types, (err, expanded) => {
         if (expanded) {
