@@ -1,72 +1,72 @@
 {
-    "title": "Test",
-    "resources": [
+  "title": "Test",
+  "resources": [
+    {
+      "methods": [
         {
-            "methods": [
-                {
-                    "description": "bla",
-                    "method": "get",
-                    "allUriParameters": [
-                        {
-                            "name": "objectid",
-                            "displayName": "objectid",
-                            "type": "string",
-                            "required": true,
-                            "description": "A valid MongoDB object id.",
-                            "examples": [
-                                "576bca8b70fddb149c4a9e92"
-                            ],
-                            "key": "id"
-                        }
-                    ]
-                }
-            ],
-            "uriParameters": [
-                {
-                    "name": "objectid",
-                    "displayName": "objectid",
-                    "type": "string",
-                    "required": true,
-                    "description": "A valid MongoDB object id.",
-                    "examples": [
-                        "576bca8b70fddb149c4a9e92"
-                    ],
-                    "key": "id"
-                }
-            ],
-            "relativeUri": "/company",
-            "displayName": "/company",
-            "relativeUriPathSegments": [
-                "company"
-            ],
-            "absoluteUri": "/company",
-            "parentUrl": "",
-            "uniqueId": "company",
-            "allUriParameters": [
-                {
-                    "name": "objectid",
-                    "displayName": "objectid",
-                    "type": "string",
-                    "required": true,
-                    "description": "A valid MongoDB object id.",
-                    "examples": [
-                        "576bca8b70fddb149c4a9e92"
-                    ],
-                    "key": "id"
-                }
-            ]
-        }
-    ],
-    "types": {
-        "objectid": {
-            "type": "string",
-            "description": "A valid MongoDB object id.",
-            "displayName": "objectid",
-            "name": "objectid",
-            "required": true,
-            "examples": [
+          "description": "bla",
+          "method": "get",
+          "allUriParameters": [
+            {
+              "name": "objectid",
+              "displayName": "objectid",
+              "type": "string",
+              "required": true,
+              "description": "A valid MongoDB object id.",
+              "examples": [
                 "576bca8b70fddb149c4a9e92"
-            ]
+              ],
+              "key": "id"
+            }
+          ],
+          "absoluteUri": "/company"
         }
+      ],
+      "uriParameters": [
+        {
+          "name": "objectid",
+          "displayName": "objectid",
+          "type": "string",
+          "required": true,
+          "description": "A valid MongoDB object id.",
+          "examples": [
+            "576bca8b70fddb149c4a9e92"
+          ],
+          "key": "id"
+        }
+      ],
+      "relativeUri": "/company",
+      "displayName": "/company",
+      "relativeUriPathSegments": [
+        "company"
+      ],
+      "absoluteUri": "/company",
+      "parentUrl": "",
+      "allUriParameters": [
+        {
+          "name": "objectid",
+          "displayName": "objectid",
+          "type": "string",
+          "required": true,
+          "description": "A valid MongoDB object id.",
+          "examples": [
+            "576bca8b70fddb149c4a9e92"
+          ],
+          "key": "id"
+        }
+      ]
     }
+  ],
+  "types": {
+    "objectid": {
+      "type": "string",
+      "description": "A valid MongoDB object id.",
+      "displayName": "objectid",
+      "name": "objectid",
+      "required": true,
+      "examples": [
+        "576bca8b70fddb149c4a9e92"
+      ]
+    }
+  }
 }

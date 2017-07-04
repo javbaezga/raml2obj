@@ -1,1362 +1,2095 @@
 {
-    "annotations": [
+  "annotations": [
+    {
+      "structuredValue": {
+        "license": "MIT"
+      },
+      "name": "info",
+      "key": "info"
+    }
+  ],
+  "traits": {
+    "secured": {
+      "queryParameters": [
         {
-            "structuredValue": {
-                "license": "MIT"
+          "name": "access_token",
+          "displayName": "access_token",
+          "type": "string",
+          "required": true,
+          "key": "access_token"
+        }
+      ],
+      "securedBy": [
+        "custom_scheme"
+      ],
+      "name": "secured",
+      "usage": "This trait can be used to apply an access token query parameter\nto any resources or HTTP methods.\n"
+    }
+  },
+  "resourceTypes": {
+    "collection": {
+      "securedBy": [
+        "custom_scheme"
+      ],
+      "name": "collection",
+      "get": {
+        "responses": [
+          {
+            "code": "200",
+            "body": [
+              {
+                "name": "application/json",
+                "displayName": "application/json",
+                "schema": [
+                  "<<resourcePathName|!singularize|!uppercamelcase>>"
+                ],
+                "required": true,
+                "key": "application/json"
+              }
+            ],
+            "key": "200"
+          }
+        ],
+        "securedBy": [
+          "custom_scheme"
+        ],
+        "description": "returns a list of <<resourcePathName|!singularize>>",
+        "method": "get"
+      }
+    }
+  },
+  "annotationTypes": {
+    "deprecated": {
+      "name": "deprecated",
+      "displayName": "deprecated",
+      "type": "object",
+      "required": true,
+      "properties": [
+        {
+          "name": "date",
+          "displayName": "date",
+          "type": "datetime",
+          "required": true,
+          "key": "date"
+        },
+        {
+          "name": "User",
+          "displayName": "User",
+          "type": "object",
+          "required": true,
+          "additionalProperties": true,
+          "properties": [
+            {
+              "type": "string",
+              "displayName": "firstname",
+              "name": "firstname",
+              "required": true,
+              "key": "firstname"
             },
-            "name": "info",
-            "key": "info"
-        }
-    ],
-    "traits": {
-        "secured": {
-            "queryParameters": [
-                {
-                    "name": "access_token",
-                    "displayName": "access_token",
-                    "type": "string",
-                    "required": true,
-                    "key": "access_token"
-                }
-            ],
-            "securedBy": [
-                "custom_scheme"
-            ],
-            "name": "secured",
-            "usage": "This trait can be used to apply an access token query parameter\nto any resources or HTTP methods.\n"
-        }
-    },
-    "resourceTypes": {
-        "collection": {
-            "securedBy": [
-                "custom_scheme"
-            ],
-            "name": "collection",
-            "get": {
-                "responses": [
-                    {
-                        "code": "200",
-                        "body": [
-                            {
-                                "name": "application/json",
-                                "displayName": "application/json",
-                                "schema": [
-                                    "<<resourcePathName|!singularize|!uppercamelcase>>"
-                                ],
-                                "required": true,
-                                "key": "application/json"
-                            }
-                        ],
-                        "key": "200"
-                    }
-                ],
-                "securedBy": [
-                    "custom_scheme"
-                ],
-                "description": "returns a list of <<resourcePathName|!singularize>>",
-                "method": "get"
+            {
+              "type": "string",
+              "displayName": "lastname",
+              "name": "lastname",
+              "required": false,
+              "examples": [
+                "Doe"
+              ],
+              "key": "lastname"
             }
+          ],
+          "examples": [
+            "{\n  \"firstname\": \"John\"\n}"
+          ],
+          "key": "deprecatedBy"
+        },
+        {
+          "name": "comment",
+          "displayName": "comment",
+          "type": "nil | string",
+          "required": true,
+          "key": "comment"
         }
+      ]
     },
-    "annotationTypes": {
-        "deprecated": {
-            "name": "deprecated",
-            "displayName": "deprecated",
+    "monitoringInterval": {
+      "name": "monitoringInterval",
+      "displayName": "monitoringInterval",
+      "type": "integer",
+      "example": null,
+      "required": true,
+      "description": "interval in seconds"
+    },
+    "ready": {
+      "name": "ready",
+      "displayName": "ready",
+      "type": "nil",
+      "required": true,
+      "description": "markes a resource as ready",
+      "allowedTargets": [
+        "Resource"
+      ]
+    },
+    "info": {
+      "name": "info",
+      "displayName": "info",
+      "type": "object",
+      "required": true,
+      "allowedTargets": [
+        "API"
+      ],
+      "properties": [
+        {
+          "name": "license",
+          "displayName": "license",
+          "type": "string",
+          "required": true,
+          "enum": [
+            "MIT",
+            "Apache 2.0"
+          ],
+          "key": "license"
+        }
+      ]
+    },
+    "rediractable": {
+      "name": "rediractable",
+      "displayName": "rediractable",
+      "type": "boolean",
+      "required": true
+    }
+  },
+  "securitySchemes": {
+    "oauth_1_0": {
+      "name": "oauth_1_0",
+      "type": "OAuth 1.0",
+      "description": "OAuth 1.0 continues to be supported for all API requests, but OAuth 2.0 is now preferred.\n",
+      "settings": {
+        "requestTokenUri": "https://api.mysampleapi.com/1/oauth/request_token",
+        "authorizationUri": "https://api.mysampleapi.com/1/oauth/authorize",
+        "tokenCredentialsUri": "https://api.mysampleapi.com/1/oauth/access_token",
+        "signatures": [
+          "HMAC-SHA1",
+          "PLAINTEXT"
+        ]
+      }
+    },
+    "oauth_2_0": {
+      "name": "oauth_2_0",
+      "type": "OAuth 2.0",
+      "description": "Dropbox supports OAuth 2.0 for authenticating all API requests.\n",
+      "describedBy": {
+        "queryParameters": [
+          {
+            "name": "access_token",
+            "displayName": "access_token",
+            "type": "string",
+            "required": true,
+            "description": "Used to send a valid OAuth 2 access token. Do not use with\nthe \"Authorization\" header.\n",
+            "key": "access_token"
+          }
+        ],
+        "headers": [
+          {
+            "name": "Authorization",
+            "displayName": "Authorization",
+            "type": "string",
+            "required": true,
+            "description": "Used to send a valid OAuth 2 access token. Do not use\nwith the \"access_token\" query string parameter.\n",
+            "key": "Authorization"
+          }
+        ],
+        "responses": [
+          {
+            "code": "401",
+            "description": "Bad or expired token. This can happen if the user or Dropbox\nrevoked or expired an access token. To fix, re-authenticate\nthe user.\n"
+          },
+          {
+            "code": "403",
+            "description": "Bad OAuth request (wrong consumer key, bad nonce, expired\ntimestamp...). Unfortunately, re-authenticating the user won't help here.\n"
+          }
+        ]
+      },
+      "settings": {
+        "accessTokenUri": "https://api.dropbox.com/1/oauth2/token",
+        "authorizationUri": "https://www.dropbox.com/1/oauth2/authorize",
+        "authorizationGrants": [
+          "authorization_code",
+          "implicit",
+          "urn:ietf:params:oauth:grant-type:saml2-bearer"
+        ]
+      }
+    },
+    "custom_scheme": {
+      "name": "custom_scheme",
+      "type": "x-custom",
+      "description": "A custom security scheme for authenticating requests.\n",
+      "describedBy": {
+        "headers": [
+          {
+            "name": "SpecialToken",
+            "displayName": "SpecialToken",
+            "type": "string",
+            "required": true,
+            "description": "Used to send a custom token.\n",
+            "key": "SpecialToken"
+          }
+        ],
+        "responses": [
+          {
+            "code": "401",
+            "description": "Bad token.\n"
+          },
+          {
+            "code": "403"
+          }
+        ]
+      }
+    }
+  },
+  "title": "World Music API",
+  "description": "This is an example of a music API.",
+  "version": "v1",
+  "baseUri": "http://{environment}.musicapi.com/{version}",
+  "baseUriParameters": [
+    {
+      "name": "environment",
+      "displayName": "environment",
+      "type": "string",
+      "required": true,
+      "enum": [
+        "stg",
+        "dev",
+        "test",
+        "prod"
+      ],
+      "key": "environment"
+    },
+    {
+      "name": "version",
+      "displayName": "version",
+      "type": "string",
+      "required": true,
+      "enum": [
+        "v1"
+      ],
+      "key": "version"
+    }
+  ],
+  "protocols": [
+    "HTTP",
+    "HTTPS"
+  ],
+  "mediaType": "application/json",
+  "securedBy": [
+    "custom_scheme"
+  ],
+  "resources": [
+    {
+      "methods": [
+        {
+          "queryString": {
+            "name": "queryString",
+            "displayName": "queryString",
             "type": "object",
             "required": true,
             "properties": [
-                {
-                    "name": "date",
-                    "displayName": "date",
-                    "type": "datetime",
+              {
+                "name": "start",
+                "displayName": "start",
+                "type": "number",
+                "required": false,
+                "key": "start"
+              },
+              {
+                "name": "page-size",
+                "displayName": "page-size",
+                "type": "number",
+                "required": false,
+                "key": "page-size"
+              }
+            ]
+          },
+          "protocols": [
+            "HTTP"
+          ],
+          "securedBy": [
+            {
+              "name": "custom_scheme",
+              "type": "x-custom",
+              "description": "A custom security scheme for authenticating requests.\n",
+              "describedBy": {
+                "headers": [
+                  {
+                    "name": "SpecialToken",
+                    "displayName": "SpecialToken",
+                    "type": "string",
                     "required": true,
-                    "key": "date"
+                    "description": "Used to send a custom token.\n",
+                    "key": "SpecialToken"
+                  }
+                ],
+                "responses": [
+                  {
+                    "code": "401",
+                    "description": "Bad token.\n"
+                  },
+                  {
+                    "code": "403"
+                  }
+                ]
+              }
+            }
+          ],
+          "method": "get",
+          "allUriParameters": [
+            {
+              "name": "environment",
+              "displayName": "environment",
+              "type": "string",
+              "required": true,
+              "enum": [
+                "stg",
+                "dev",
+                "test",
+                "prod"
+              ],
+              "key": "environment"
+            },
+            {
+              "name": "version",
+              "displayName": "version",
+              "type": "string",
+              "required": true,
+              "enum": [
+                "v1"
+              ],
+              "key": "version"
+            }
+          ],
+          "absoluteUri": "http://{environment}.musicapi.com/{version}/api",
+          "queryParameters": [],
+          "headers": [
+            {
+              "name": "SpecialToken",
+              "displayName": "SpecialToken",
+              "type": "string",
+              "required": true,
+              "description": "Used to send a custom token.\n",
+              "key": "SpecialToken"
+            }
+          ],
+          "responses": [
+            {
+              "code": "401",
+              "description": "Bad token.\n"
+            },
+            {
+              "code": "403"
+            }
+          ]
+        },
+        {
+          "body": [
+            {
+              "name": "RamlDataType",
+              "displayName": "RamlDataType",
+              "type": "object",
+              "required": true,
+              "properties": [
+                {
+                  "name": "propString",
+                  "displayName": "propString",
+                  "type": "string",
+                  "required": true,
+                  "key": "propString"
                 },
                 {
-                    "name": "User",
-                    "displayName": "User",
+                  "name": "propStringArray1",
+                  "displayName": "propStringArray1",
+                  "type": "array",
+                  "required": true,
+                  "items": "string",
+                  "key": "propStringArray1"
+                },
+                {
+                  "name": "ideas",
+                  "displayName": "ideas",
+                  "type": "array",
+                  "required": true,
+                  "items": {
+                    "name": "items",
+                    "displayName": "items",
+                    "type": "object",
+                    "required": true,
+                    "properties": [
+                      {
+                        "name": "comment",
+                        "displayName": "comment",
+                        "type": "string",
+                        "required": true,
+                        "key": "comment"
+                      }
+                    ]
+                  },
+                  "key": "ideas"
+                },
+                {
+                  "name": "extIdeas",
+                  "displayName": "extIdeas",
+                  "required": true,
+                  "properties": [
+                    {
+                      "name": "createdBy",
+                      "displayName": "createdBy",
+                      "type": "string",
+                      "required": true,
+                      "key": "createdBy"
+                    }
+                  ],
+                  "type": {
+                    "name": "type",
+                    "displayName": "type",
+                    "type": "object",
+                    "required": true,
+                    "properties": [
+                      {
+                        "name": "comment",
+                        "displayName": "comment",
+                        "type": "string",
+                        "required": true,
+                        "key": "comment"
+                      }
+                    ]
+                  },
+                  "key": "extIdeas"
+                },
+                {
+                  "name": "feedback",
+                  "displayName": "feedback",
+                  "type": "string",
+                  "default": "very nice",
+                  "required": true,
+                  "pattern": "[a-zA-Z\\s]*",
+                  "minLength": 1,
+                  "maxLength": 255,
+                  "examples": [
+                    "very well made"
+                  ],
+                  "key": "feedback"
+                },
+                {
+                  "name": "propNumber",
+                  "displayName": "propNumber",
+                  "type": "number",
+                  "required": true,
+                  "minimum": 0,
+                  "maximum": 32,
+                  "format": "int32",
+                  "multipleOf": 2,
+                  "fixedFacets": {
+                    "format": "int32"
+                  },
+                  "key": "propNumber"
+                },
+                {
+                  "name": "propInteger",
+                  "displayName": "propInteger",
+                  "type": "integer",
+                  "required": true,
+                  "minimum": 3,
+                  "maximum": 5,
+                  "format": "int8",
+                  "multipleOf": 1,
+                  "fixedFacets": {
+                    "format": "int8"
+                  },
+                  "key": "propInteger"
+                },
+                {
+                  "name": "propBoolean",
+                  "displayName": "propBoolean",
+                  "type": "boolean",
+                  "required": true,
+                  "key": "propBoolean"
+                },
+                {
+                  "name": "propDate",
+                  "displayName": "propDate",
+                  "type": "date-only",
+                  "required": true,
+                  "examples": [
+                    "2015-05-23"
+                  ],
+                  "key": "propDate"
+                },
+                {
+                  "name": "userPicture",
+                  "displayName": "userPicture",
+                  "type": "file",
+                  "required": true,
+                  "fileTypes": [
+                    {},
+                    {}
+                  ],
+                  "maxLength": 307200,
+                  "fixedFacets": {
+                    "fileTypes": [
+                      "image/jpeg",
+                      "image/png"
+                    ],
+                    "maxLength": 307200
+                  },
+                  "key": "userPicture"
+                },
+                {
+                  "name": "NilValue",
+                  "displayName": "NilValue",
+                  "type": "object",
+                  "required": true,
+                  "properties": [
+                    {
+                      "name": "name",
+                      "displayName": "name",
+                      "type": "string",
+                      "required": true,
+                      "key": "name"
+                    },
+                    {
+                      "name": "comment",
+                      "displayName": "comment",
+                      "type": "string?",
+                      "required": true,
+                      "key": "comment"
+                    }
+                  ],
+                  "key": "NilValue"
+                },
+                {
+                  "name": "CatOrDog",
+                  "displayName": "CatOrDog",
+                  "type": "ApiLib.Cat | ApiLib.Dog",
+                  "required": true,
+                  "key": "CatOrDog"
+                },
+                [
+                  {
+                    "name": "Cat",
+                    "displayName": "Cat",
                     "type": "object",
                     "required": true,
                     "additionalProperties": true,
                     "properties": [
-                        {
-                            "type": "string",
-                            "displayName": "firstname",
-                            "name": "firstname",
-                            "required": true,
-                            "key": "firstname"
-                        },
-                        {
-                            "type": "string",
-                            "displayName": "lastname",
-                            "name": "lastname",
-                            "required": false,
-                            "examples": [
-                                "Doe"
-                            ],
-                            "key": "lastname"
-                        }
-                    ],
-                    "examples": [
-                        "{\n  \"firstname\": \"John\"\n}"
-                    ],
-                    "key": "deprecatedBy"
-                },
-                {
-                    "name": "comment",
-                    "displayName": "comment",
-                    "type": "nil | string",
+                      {
+                        "type": "string",
+                        "displayName": "name",
+                        "name": "name",
+                        "required": true,
+                        "key": "name"
+                      },
+                      {
+                        "type": "string",
+                        "displayName": "color",
+                        "name": "color",
+                        "required": true,
+                        "key": "color"
+                      }
+                    ]
+                  },
+                  {
+                    "name": "Dog",
+                    "displayName": "Dog",
+                    "type": "object",
                     "required": true,
-                    "key": "comment"
-                }
-            ]
-        },
-        "monitoringInterval": {
-            "name": "monitoringInterval",
-            "displayName": "monitoringInterval",
-            "type": "integer",
-            "example": null,
-            "required": true,
-            "description": "interval in seconds"
-        },
-        "ready": {
-            "name": "ready",
-            "displayName": "ready",
-            "type": "nil",
-            "required": true,
-            "description": "markes a resource as ready",
-            "allowedTargets": [
-                "Resource"
-            ]
-        },
-        "info": {
-            "name": "info",
-            "displayName": "info",
-            "type": "object",
-            "required": true,
-            "allowedTargets": [
-                "API"
-            ],
-            "properties": [
+                    "additionalProperties": true,
+                    "properties": [
+                      {
+                        "type": "string",
+                        "displayName": "name",
+                        "name": "name",
+                        "required": true,
+                        "key": "name"
+                      },
+                      {
+                        "type": "string",
+                        "displayName": "fangs",
+                        "name": "fangs",
+                        "required": true,
+                        "key": "fangs"
+                      }
+                    ]
+                  }
+                ],
                 {
-                    "name": "license",
-                    "displayName": "license",
+                  "name": "CustomDate",
+                  "displayName": "CustomDate",
+                  "type": "date-only",
+                  "required": true,
+                  "fixedFacets": {
+                    "noHolidays": true
+                  },
+                  "facets": {
+                    "onlyFutureDates": {
+                      "type": {
+                        "type": "boolean"
+                      }
+                    },
+                    "noHolidays": {
+                      "type": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "key": "PossibleMeetingDate"
+                }
+              ],
+              "key": "application/json"
+            }
+          ],
+          "protocols": [
+            "HTTP"
+          ],
+          "securedBy": [
+            {
+              "name": "custom_scheme",
+              "type": "x-custom",
+              "description": "A custom security scheme for authenticating requests.\n",
+              "describedBy": {
+                "headers": [
+                  {
+                    "name": "SpecialToken",
+                    "displayName": "SpecialToken",
                     "type": "string",
                     "required": true,
-                    "enum": [
-                        "MIT",
-                        "Apache 2.0"
-                    ],
-                    "key": "license"
-                }
-            ]
-        },
-        "rediractable": {
-            "name": "rediractable",
-            "displayName": "rediractable",
-            "type": "boolean",
-            "required": true
-        }
-    },
-    "securitySchemes": {
-        "oauth_1_0": {
-            "name": "oauth_1_0",
-            "type": "OAuth 1.0",
-            "description": "OAuth 1.0 continues to be supported for all API requests, but OAuth 2.0 is now preferred.\n",
-            "settings": {
-                "requestTokenUri": "https://api.mysampleapi.com/1/oauth/request_token",
-                "authorizationUri": "https://api.mysampleapi.com/1/oauth/authorize",
-                "tokenCredentialsUri": "https://api.mysampleapi.com/1/oauth/access_token",
-                "signatures": [
-                    "HMAC-SHA1",
-                    "PLAINTEXT"
-                ]
-            }
-        },
-        "oauth_2_0": {
-            "name": "oauth_2_0",
-            "type": "OAuth 2.0",
-            "description": "Dropbox supports OAuth 2.0 for authenticating all API requests.\n",
-            "describedBy": {
-                "queryParameters": [
-                    {
-                        "name": "access_token",
-                        "displayName": "access_token",
-                        "type": "string",
-                        "required": true,
-                        "description": "Used to send a valid OAuth 2 access token. Do not use with\nthe \"Authorization\" header.\n",
-                        "key": "access_token"
-                    }
-                ],
-                "headers": [
-                    {
-                        "name": "Authorization",
-                        "displayName": "Authorization",
-                        "type": "string",
-                        "required": true,
-                        "description": "Used to send a valid OAuth 2 access token. Do not use\nwith the \"access_token\" query string parameter.\n",
-                        "key": "Authorization"
-                    }
+                    "description": "Used to send a custom token.\n",
+                    "key": "SpecialToken"
+                  }
                 ],
                 "responses": [
-                    {
-                        "code": "401",
-                        "description": "Bad or expired token. This can happen if the user or Dropbox\nrevoked or expired an access token. To fix, re-authenticate\nthe user.\n"
-                    },
-                    {
-                        "code": "403",
-                        "description": "Bad OAuth request (wrong consumer key, bad nonce, expired\ntimestamp...). Unfortunately, re-authenticating the user won't help here.\n"
-                    }
+                  {
+                    "code": "401",
+                    "description": "Bad token.\n"
+                  },
+                  {
+                    "code": "403"
+                  }
                 ]
+              }
+            }
+          ],
+          "method": "post",
+          "allUriParameters": [
+            {
+              "name": "environment",
+              "displayName": "environment",
+              "type": "string",
+              "required": true,
+              "enum": [
+                "stg",
+                "dev",
+                "test",
+                "prod"
+              ],
+              "key": "environment"
             },
-            "settings": {
+            {
+              "name": "version",
+              "displayName": "version",
+              "type": "string",
+              "required": true,
+              "enum": [
+                "v1"
+              ],
+              "key": "version"
+            }
+          ],
+          "absoluteUri": "http://{environment}.musicapi.com/{version}/api",
+          "queryParameters": [],
+          "headers": [
+            {
+              "name": "SpecialToken",
+              "displayName": "SpecialToken",
+              "type": "string",
+              "required": true,
+              "description": "Used to send a custom token.\n",
+              "key": "SpecialToken"
+            }
+          ],
+          "responses": [
+            {
+              "code": "401",
+              "description": "Bad token.\n"
+            },
+            {
+              "code": "403"
+            }
+          ]
+        }
+      ],
+      "securedBy": [
+        {
+          "name": "custom_scheme",
+          "type": "x-custom",
+          "description": "A custom security scheme for authenticating requests.\n",
+          "describedBy": {
+            "headers": [
+              {
+                "name": "SpecialToken",
+                "displayName": "SpecialToken",
+                "type": "string",
+                "required": true,
+                "description": "Used to send a custom token.\n",
+                "key": "SpecialToken"
+              }
+            ],
+            "responses": [
+              {
+                "code": "401",
+                "description": "Bad token.\n"
+              },
+              {
+                "code": "403"
+              }
+            ]
+          }
+        }
+      ],
+      "relativeUri": "/api",
+      "displayName": "/api",
+      "relativeUriPathSegments": [
+        "api"
+      ],
+      "absoluteUri": "http://{environment}.musicapi.com/{version}/api",
+      "parentUrl": "",
+      "allUriParameters": [
+        {
+          "name": "environment",
+          "displayName": "environment",
+          "type": "string",
+          "required": true,
+          "enum": [
+            "stg",
+            "dev",
+            "test",
+            "prod"
+          ],
+          "key": "environment"
+        },
+        {
+          "name": "version",
+          "displayName": "version",
+          "type": "string",
+          "required": true,
+          "enum": [
+            "v1"
+          ],
+          "key": "version"
+        }
+      ],
+      "queryParameters": [],
+      "headers": [
+        {
+          "name": "SpecialToken",
+          "displayName": "SpecialToken",
+          "type": "string",
+          "required": true,
+          "description": "Used to send a custom token.\n",
+          "key": "SpecialToken"
+        }
+      ],
+      "responses": [
+        {
+          "code": "401",
+          "description": "Bad token.\n"
+        },
+        {
+          "code": "403"
+        }
+      ]
+    },
+    {
+      "methods": [
+        {
+          "responses": [
+            {
+              "code": "200",
+              "body": [
+                {
+                  "name": "AnotherEntry",
+                  "displayName": "AnotherEntry",
+                  "type": "json",
+                  "required": true,
+                  "content": "{\n  \"type\": \"array\",\n  \"items\": {\n    \"$ref\": \"#/definitions/song\"\n  },\n  \"definitions\": {\n    \"song\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"title\": {\n          \"type\": \"string\"\n        },\n        \"artist\": {\n          \"type\": \"string\"\n        }\n      }\n    }\n  }\n}\n",
+                  "description": "This is just another entry to simulate that you can add facets also on JSON\nschema defined types. Although you can only add documentation-based facets.\n",
+                  "key": "application/json"
+                }
+              ],
+              "key": "200"
+            },
+            {
+              "code": "401",
+              "description": "Bad token.\n"
+            },
+            {
+              "code": "403"
+            }
+          ],
+          "protocols": [
+            "HTTP"
+          ],
+          "securedBy": [
+            {
+              "name": "custom_scheme",
+              "type": "x-custom",
+              "description": "A custom security scheme for authenticating requests.\n",
+              "describedBy": {
+                "headers": [
+                  {
+                    "name": "SpecialToken",
+                    "displayName": "SpecialToken",
+                    "type": "string",
+                    "required": true,
+                    "description": "Used to send a custom token.\n",
+                    "key": "SpecialToken"
+                  }
+                ],
+                "responses": [
+                  {
+                    "code": "401",
+                    "description": "Bad token.\n"
+                  },
+                  {
+                    "code": "403"
+                  }
+                ]
+              }
+            }
+          ],
+          "method": "post",
+          "allUriParameters": [
+            {
+              "name": "environment",
+              "displayName": "environment",
+              "type": "string",
+              "required": true,
+              "enum": [
+                "stg",
+                "dev",
+                "test",
+                "prod"
+              ],
+              "key": "environment"
+            },
+            {
+              "name": "version",
+              "displayName": "version",
+              "type": "string",
+              "required": true,
+              "enum": [
+                "v1"
+              ],
+              "key": "version"
+            }
+          ],
+          "absoluteUri": "http://{environment}.musicapi.com/{version}/entry",
+          "queryParameters": [],
+          "headers": [
+            {
+              "name": "SpecialToken",
+              "displayName": "SpecialToken",
+              "type": "string",
+              "required": true,
+              "description": "Used to send a custom token.\n",
+              "key": "SpecialToken"
+            }
+          ]
+        },
+        {
+          "responses": [
+            {
+              "code": "200",
+              "body": [
+                {
+                  "name": "application/json",
+                  "displayName": "application/json",
+                  "schema": [
+                    "Entry"
+                  ],
+                  "required": true,
+                  "key": "application/json"
+                }
+              ],
+              "key": "200"
+            },
+            {
+              "code": "401",
+              "description": "Bad token.\n"
+            },
+            {
+              "code": "403"
+            }
+          ],
+          "protocols": [
+            "HTTP"
+          ],
+          "securedBy": [
+            {
+              "name": "custom_scheme",
+              "type": "x-custom",
+              "description": "A custom security scheme for authenticating requests.\n",
+              "describedBy": {
+                "headers": [
+                  {
+                    "name": "SpecialToken",
+                    "displayName": "SpecialToken",
+                    "type": "string",
+                    "required": true,
+                    "description": "Used to send a custom token.\n",
+                    "key": "SpecialToken"
+                  }
+                ],
+                "responses": [
+                  {
+                    "code": "401",
+                    "description": "Bad token.\n"
+                  },
+                  {
+                    "code": "403"
+                  }
+                ]
+              }
+            }
+          ],
+          "description": "returns a list of entry",
+          "method": "get",
+          "allUriParameters": [
+            {
+              "name": "environment",
+              "displayName": "environment",
+              "type": "string",
+              "required": true,
+              "enum": [
+                "stg",
+                "dev",
+                "test",
+                "prod"
+              ],
+              "key": "environment"
+            },
+            {
+              "name": "version",
+              "displayName": "version",
+              "type": "string",
+              "required": true,
+              "enum": [
+                "v1"
+              ],
+              "key": "version"
+            }
+          ],
+          "absoluteUri": "http://{environment}.musicapi.com/{version}/entry",
+          "queryParameters": [],
+          "headers": [
+            {
+              "name": "SpecialToken",
+              "displayName": "SpecialToken",
+              "type": "string",
+              "required": true,
+              "description": "Used to send a custom token.\n",
+              "key": "SpecialToken"
+            }
+          ]
+        }
+      ],
+      "type": "collection",
+      "securedBy": [
+        {
+          "name": "custom_scheme",
+          "type": "x-custom",
+          "description": "A custom security scheme for authenticating requests.\n",
+          "describedBy": {
+            "headers": [
+              {
+                "name": "SpecialToken",
+                "displayName": "SpecialToken",
+                "type": "string",
+                "required": true,
+                "description": "Used to send a custom token.\n",
+                "key": "SpecialToken"
+              }
+            ],
+            "responses": [
+              {
+                "code": "401",
+                "description": "Bad token.\n"
+              },
+              {
+                "code": "403"
+              }
+            ]
+          }
+        }
+      ],
+      "relativeUri": "/entry",
+      "displayName": "/entry",
+      "relativeUriPathSegments": [
+        "entry"
+      ],
+      "absoluteUri": "http://{environment}.musicapi.com/{version}/entry",
+      "parentUrl": "",
+      "allUriParameters": [
+        {
+          "name": "environment",
+          "displayName": "environment",
+          "type": "string",
+          "required": true,
+          "enum": [
+            "stg",
+            "dev",
+            "test",
+            "prod"
+          ],
+          "key": "environment"
+        },
+        {
+          "name": "version",
+          "displayName": "version",
+          "type": "string",
+          "required": true,
+          "enum": [
+            "v1"
+          ],
+          "key": "version"
+        }
+      ],
+      "queryParameters": [],
+      "headers": [
+        {
+          "name": "SpecialToken",
+          "displayName": "SpecialToken",
+          "type": "string",
+          "required": true,
+          "description": "Used to send a custom token.\n",
+          "key": "SpecialToken"
+        }
+      ],
+      "responses": [
+        {
+          "code": "401",
+          "description": "Bad token.\n"
+        },
+        {
+          "code": "403"
+        }
+      ]
+    },
+    {
+      "annotations": [
+        {
+          "structuredValue": null,
+          "name": "ready",
+          "key": "ready"
+        }
+      ],
+      "methods": [
+        {
+          "annotations": [
+            {
+              "structuredValue": 30,
+              "name": "monitoringInterval",
+              "key": "monitoringInterval"
+            }
+          ],
+          "queryParameters": [
+            {
+              "name": "genre",
+              "displayName": "genre",
+              "type": "string",
+              "required": true,
+              "description": "filter the songs by genre",
+              "key": "genre"
+            },
+            {
+              "name": "access_token",
+              "displayName": "access_token",
+              "type": "string",
+              "required": true,
+              "key": "access_token"
+            },
+            {
+              "name": "access_token",
+              "displayName": "access_token",
+              "type": "string",
+              "required": true,
+              "description": "Used to send a valid OAuth 2 access token. Do not use with\nthe \"Authorization\" header.\n",
+              "key": "access_token"
+            }
+          ],
+          "protocols": [
+            "HTTP"
+          ],
+          "securedBy": [
+            {
+              "name": "oauth_2_0",
+              "type": "OAuth 2.0",
+              "description": "Dropbox supports OAuth 2.0 for authenticating all API requests.\n",
+              "describedBy": {
+                "queryParameters": [
+                  {
+                    "name": "access_token",
+                    "displayName": "access_token",
+                    "type": "string",
+                    "required": true,
+                    "description": "Used to send a valid OAuth 2 access token. Do not use with\nthe \"Authorization\" header.\n",
+                    "key": "access_token"
+                  }
+                ],
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "displayName": "Authorization",
+                    "type": "string",
+                    "required": true,
+                    "description": "Used to send a valid OAuth 2 access token. Do not use\nwith the \"access_token\" query string parameter.\n",
+                    "key": "Authorization"
+                  }
+                ],
+                "responses": [
+                  {
+                    "code": "401",
+                    "description": "Bad or expired token. This can happen if the user or Dropbox\nrevoked or expired an access token. To fix, re-authenticate\nthe user.\n"
+                  },
+                  {
+                    "code": "403",
+                    "description": "Bad OAuth request (wrong consumer key, bad nonce, expired\ntimestamp...). Unfortunately, re-authenticating the user won't help here.\n"
+                  }
+                ]
+              },
+              "settings": {
                 "accessTokenUri": "https://api.dropbox.com/1/oauth2/token",
                 "authorizationUri": "https://www.dropbox.com/1/oauth2/authorize",
                 "authorizationGrants": [
-                    "authorization_code",
-                    "implicit",
-                    "urn:ietf:params:oauth:grant-type:saml2-bearer"
+                  "authorization_code",
+                  "implicit",
+                  "urn:ietf:params:oauth:grant-type:saml2-bearer"
                 ]
+              }
+            },
+            null
+          ],
+          "method": "get",
+          "allUriParameters": [
+            {
+              "name": "environment",
+              "displayName": "environment",
+              "type": "string",
+              "required": true,
+              "enum": [
+                "stg",
+                "dev",
+                "test",
+                "prod"
+              ],
+              "key": "environment"
+            },
+            {
+              "name": "version",
+              "displayName": "version",
+              "type": "string",
+              "required": true,
+              "enum": [
+                "v1"
+              ],
+              "key": "version"
             }
+          ],
+          "absoluteUri": "http://{environment}.musicapi.com/{version}/songs",
+          "headers": [
+            {
+              "name": "Authorization",
+              "displayName": "Authorization",
+              "type": "string",
+              "required": true,
+              "description": "Used to send a valid OAuth 2 access token. Do not use\nwith the \"access_token\" query string parameter.\n",
+              "key": "Authorization"
+            }
+          ],
+          "responses": [
+            {
+              "code": "401",
+              "description": "Bad or expired token. This can happen if the user or Dropbox\nrevoked or expired an access token. To fix, re-authenticate\nthe user.\n"
+            },
+            {
+              "code": "403",
+              "description": "Bad OAuth request (wrong consumer key, bad nonce, expired\ntimestamp...). Unfortunately, re-authenticating the user won't help here.\n"
+            }
+          ]
         },
-        "custom_scheme": {
-            "name": "custom_scheme",
-            "type": "x-custom",
-            "description": "A custom security scheme for authenticating requests.\n",
-            "describedBy": {
+        {
+          "queryParameters": [
+            {
+              "name": "access_token",
+              "displayName": "access_token",
+              "type": "string",
+              "required": true,
+              "key": "access_token"
+            }
+          ],
+          "protocols": [
+            "HTTP"
+          ],
+          "securedBy": [
+            {
+              "name": "custom_scheme",
+              "type": "x-custom",
+              "description": "A custom security scheme for authenticating requests.\n",
+              "describedBy": {
                 "headers": [
+                  {
+                    "name": "SpecialToken",
+                    "displayName": "SpecialToken",
+                    "type": "string",
+                    "required": true,
+                    "description": "Used to send a custom token.\n",
+                    "key": "SpecialToken"
+                  }
+                ],
+                "responses": [
+                  {
+                    "code": "401",
+                    "description": "Bad token.\n"
+                  },
+                  {
+                    "code": "403"
+                  }
+                ]
+              }
+            }
+          ],
+          "method": "post",
+          "allUriParameters": [
+            {
+              "name": "environment",
+              "displayName": "environment",
+              "type": "string",
+              "required": true,
+              "enum": [
+                "stg",
+                "dev",
+                "test",
+                "prod"
+              ],
+              "key": "environment"
+            },
+            {
+              "name": "version",
+              "displayName": "version",
+              "type": "string",
+              "required": true,
+              "enum": [
+                "v1"
+              ],
+              "key": "version"
+            }
+          ],
+          "absoluteUri": "http://{environment}.musicapi.com/{version}/songs",
+          "headers": [
+            {
+              "name": "SpecialToken",
+              "displayName": "SpecialToken",
+              "type": "string",
+              "required": true,
+              "description": "Used to send a custom token.\n",
+              "key": "SpecialToken"
+            }
+          ],
+          "responses": [
+            {
+              "code": "401",
+              "description": "Bad token.\n"
+            },
+            {
+              "code": "403"
+            }
+          ]
+        }
+      ],
+      "is": [
+        "secured"
+      ],
+      "description": "Access to all songs inside the music world library.",
+      "securedBy": [
+        {
+          "name": "custom_scheme",
+          "type": "x-custom",
+          "description": "A custom security scheme for authenticating requests.\n",
+          "describedBy": {
+            "headers": [
+              {
+                "name": "SpecialToken",
+                "displayName": "SpecialToken",
+                "type": "string",
+                "required": true,
+                "description": "Used to send a custom token.\n",
+                "key": "SpecialToken"
+              }
+            ],
+            "responses": [
+              {
+                "code": "401",
+                "description": "Bad token.\n"
+              },
+              {
+                "code": "403"
+              }
+            ]
+          }
+        }
+      ],
+      "relativeUri": "/songs",
+      "displayName": "Songs",
+      "resources": [
+        {
+          "methods": [
+            {
+              "annotations": [
+                {
+                  "structuredValue": {
+                    "date": "2016-02-28T16:41:41.090Z",
+                    "deprecatedBy": {
+                      "firstname": "Christian"
+                    },
+                    "comment": "no comment"
+                  },
+                  "name": "deprecated",
+                  "key": "deprecated"
+                }
+              ],
+              "responses": [
+                {
+                  "code": "200",
+                  "body": [
                     {
+                      "name": "Song",
+                      "displayName": "Song",
+                      "type": "object",
+                      "required": true,
+                      "additionalProperties": true,
+                      "examples": [
+                        "{\n  \"title\": \"My Song\",\n  \"length\": 12\n}",
+                        "{\n  \"title\": \"Last\",\n  \"length\": 3\n}"
+                      ],
+                      "properties": [
+                        {
+                          "type": "string",
+                          "displayName": "title",
+                          "name": "title",
+                          "required": true,
+                          "key": "title"
+                        },
+                        {
+                          "type": "number",
+                          "displayName": "length",
+                          "name": "length",
+                          "required": true,
+                          "key": "length"
+                        }
+                      ],
+                      "key": "application/json"
+                    },
+                    {
+                      "name": "application/xml",
+                      "displayName": "application/xml",
+                      "type": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"\n  elementFormDefault=\"qualified\" attributeFormDefault=\"unqualified\">\n  <xs:element name=\"song\">\n    <xs:complexType>\n      <xs:sequence>\n        <xs:element name=\"title\" type=\"xs:string\" />\n        <xs:element name=\"artist\" type=\"xs:string\" />\n      </xs:sequence>\n    </xs:complexType>\n  </xs:element>\n</xs:schema>\n",
+                      "required": true,
+                      "examples": [
+                        "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<song>\n  <title>str1234</title>\n  <artist>str1234</artist>\n</song>\n"
+                      ],
+                      "key": "application/xml"
+                    }
+                  ],
+                  "key": "200"
+                },
+                {
+                  "code": "401",
+                  "description": "Bad token.\n"
+                },
+                {
+                  "code": "403"
+                }
+              ],
+              "protocols": [
+                "HTTP"
+              ],
+              "securedBy": [
+                {
+                  "name": "custom_scheme",
+                  "type": "x-custom",
+                  "description": "A custom security scheme for authenticating requests.\n",
+                  "describedBy": {
+                    "headers": [
+                      {
                         "name": "SpecialToken",
                         "displayName": "SpecialToken",
                         "type": "string",
                         "required": true,
                         "description": "Used to send a custom token.\n",
                         "key": "SpecialToken"
-                    }
-                ],
-                "responses": [
-                    {
+                      }
+                    ],
+                    "responses": [
+                      {
                         "code": "401",
                         "description": "Bad token.\n"
-                    },
-                    {
+                      },
+                      {
                         "code": "403"
-                    }
-                ]
+                      }
+                    ]
+                  }
+                }
+              ],
+              "method": "get",
+              "allUriParameters": [
+                {
+                  "name": "environment",
+                  "displayName": "environment",
+                  "type": "string",
+                  "required": true,
+                  "enum": [
+                    "stg",
+                    "dev",
+                    "test",
+                    "prod"
+                  ],
+                  "key": "environment"
+                },
+                {
+                  "name": "version",
+                  "displayName": "version",
+                  "type": "string",
+                  "required": true,
+                  "enum": [
+                    "v1"
+                  ],
+                  "key": "version"
+                },
+                {
+                  "name": "songId",
+                  "displayName": "songId",
+                  "type": "string",
+                  "required": true,
+                  "key": "songId"
+                }
+              ],
+              "absoluteUri": "http://{environment}.musicapi.com/{version}/songs/{songId}",
+              "queryParameters": [],
+              "headers": [
+                {
+                  "name": "SpecialToken",
+                  "displayName": "SpecialToken",
+                  "type": "string",
+                  "required": true,
+                  "description": "Used to send a custom token.\n",
+                  "key": "SpecialToken"
+                }
+              ]
             }
-        }
-    },
-    "title": "World Music API",
-    "description": "This is an example of a music API.",
-    "version": "v1",
-    "baseUri": "http://{environment}.musicapi.com/{version}",
-    "baseUriParameters": [
-        {
-            "name": "environment",
-            "displayName": "environment",
-            "type": "string",
-            "required": true,
-            "enum": [
+          ],
+          "securedBy": [
+            {
+              "name": "custom_scheme",
+              "type": "x-custom",
+              "description": "A custom security scheme for authenticating requests.\n",
+              "describedBy": {
+                "headers": [
+                  {
+                    "name": "SpecialToken",
+                    "displayName": "SpecialToken",
+                    "type": "string",
+                    "required": true,
+                    "description": "Used to send a custom token.\n",
+                    "key": "SpecialToken"
+                  }
+                ],
+                "responses": [
+                  {
+                    "code": "401",
+                    "description": "Bad token.\n"
+                  },
+                  {
+                    "code": "403"
+                  }
+                ]
+              }
+            }
+          ],
+          "uriParameters": [
+            {
+              "name": "songId",
+              "displayName": "songId",
+              "type": "string",
+              "required": true,
+              "key": "songId"
+            }
+          ],
+          "relativeUri": "/{songId}",
+          "displayName": "/{songId}",
+          "relativeUriPathSegments": [
+            "{songId}"
+          ],
+          "absoluteUri": "http://{environment}.musicapi.com/{version}/songs/{songId}",
+          "parentUrl": "/songs",
+          "allUriParameters": [
+            {
+              "name": "environment",
+              "displayName": "environment",
+              "type": "string",
+              "required": true,
+              "enum": [
                 "stg",
                 "dev",
                 "test",
                 "prod"
-            ],
-            "key": "environment"
-        },
-        {
-            "name": "version",
-            "displayName": "version",
-            "type": "string",
-            "required": true,
-            "enum": [
-                "v1"
-            ],
-            "key": "version"
-        }
-    ],
-    "protocols": [
-        "HTTP",
-        "HTTPS"
-    ],
-    "mediaType": "application/json",
-    "securedBy": [
-        "custom_scheme"
-    ],
-    "resources": [
-        {
-            "methods": [
-                {
-                    "queryString": {
-                        "name": "queryString",
-                        "displayName": "queryString",
-                        "type": "object",
-                        "required": true,
-                        "properties": [
-                            {
-                                "name": "start",
-                                "displayName": "start",
-                                "type": "number",
-                                "required": false,
-                                "key": "start"
-                            },
-                            {
-                                "name": "page-size",
-                                "displayName": "page-size",
-                                "type": "number",
-                                "required": false,
-                                "key": "page-size"
-                            }
-                        ]
-                    },
-                    "protocols": [
-                        "HTTP"
-                    ],
-                    "securedBy": [
-                        "custom_scheme"
-                    ],
-                    "method": "get",
-                    "allUriParameters": []
-                },
-                {
-                    "body": [
-                        {
-                            "name": "RamlDataType",
-                            "displayName": "RamlDataType",
-                            "type": "object",
-                            "required": true,
-                            "properties": [
-                                {
-                                    "name": "propString",
-                                    "displayName": "propString",
-                                    "type": "string",
-                                    "required": true,
-                                    "key": "propString"
-                                },
-                                {
-                                    "name": "propStringArray1",
-                                    "displayName": "propStringArray1",
-                                    "type": "array",
-                                    "required": true,
-                                    "items": "string",
-                                    "key": "propStringArray1"
-                                },
-                                {
-                                    "name": "ideas",
-                                    "displayName": "ideas",
-                                    "type": "array",
-                                    "required": true,
-                                    "items": {
-                                        "name": "items",
-                                        "displayName": "items",
-                                        "type": "object",
-                                        "required": true,
-                                        "properties": [
-                                            {
-                                                "name": "comment",
-                                                "displayName": "comment",
-                                                "type": "string",
-                                                "required": true,
-                                                "key": "comment"
-                                            }
-                                        ]
-                                    },
-                                    "key": "ideas"
-                                },
-                                {
-                                    "name": "extIdeas",
-                                    "displayName": "extIdeas",
-                                    "required": true,
-                                    "properties": [
-                                        {
-                                            "name": "createdBy",
-                                            "displayName": "createdBy",
-                                            "type": "string",
-                                            "required": true,
-                                            "key": "createdBy"
-                                        }
-                                    ],
-                                    "type": {
-                                        "name": "type",
-                                        "displayName": "type",
-                                        "type": "object",
-                                        "required": true,
-                                        "properties": [
-                                            {
-                                                "name": "comment",
-                                                "displayName": "comment",
-                                                "type": "string",
-                                                "required": true,
-                                                "__METADATA__": {
-                                                    "primitiveValuesMeta": {
-                                                        "displayName": {
-                                                            "calculated": true
-                                                        },
-                                                        "required": {
-                                                            "insertedAsDefault": true
-                                                        }
-                                                    }
-                                                },
-                                                "key": "comment"
-                                            }
-                                        ],
-                                        "__METADATA__": {
-                                            "primitiveValuesMeta": {
-                                                "displayName": {
-                                                    "calculated": true
-                                                },
-                                                "type": {
-                                                    "insertedAsDefault": true
-                                                },
-                                                "required": {
-                                                    "insertedAsDefault": true
-                                                }
-                                            }
-                                        }
-                                    },
-                                    "key": "extIdeas"
-                                },
-                                {
-                                    "name": "feedback",
-                                    "displayName": "feedback",
-                                    "type": "string",
-                                    "default": "very nice",
-                                    "required": true,
-                                    "pattern": "[a-zA-Z\\s]*",
-                                    "minLength": 1,
-                                    "maxLength": 255,
-                                    "examples": [
-                                        "very well made"
-                                    ],
-                                    "key": "feedback"
-                                },
-                                {
-                                    "name": "propNumber",
-                                    "displayName": "propNumber",
-                                    "type": "number",
-                                    "required": true,
-                                    "minimum": 0,
-                                    "maximum": 32,
-                                    "format": "int32",
-                                    "multipleOf": 2,
-                                    "fixedFacets": {
-                                        "format": "int32"
-                                    },
-                                    "key": "propNumber"
-                                },
-                                {
-                                    "name": "propInteger",
-                                    "displayName": "propInteger",
-                                    "type": "integer",
-                                    "required": true,
-                                    "minimum": 3,
-                                    "maximum": 5,
-                                    "format": "int8",
-                                    "multipleOf": 1,
-                                    "fixedFacets": {
-                                        "format": "int8"
-                                    },
-                                    "key": "propInteger"
-                                },
-                                {
-                                    "name": "propBoolean",
-                                    "displayName": "propBoolean",
-                                    "type": "boolean",
-                                    "required": true,
-                                    "key": "propBoolean"
-                                },
-                                {
-                                    "name": "propDate",
-                                    "displayName": "propDate",
-                                    "type": "date-only",
-                                    "required": true,
-                                    "examples": [
-                                        "2015-05-23"
-                                    ],
-                                    "key": "propDate"
-                                },
-                                {
-                                    "name": "userPicture",
-                                    "displayName": "userPicture",
-                                    "type": "file",
-                                    "required": true,
-                                    "fileTypes": [
-                                        {},
-                                        {}
-                                    ],
-                                    "maxLength": 307200,
-                                    "fixedFacets": {
-                                        "fileTypes": [
-                                            "image/jpeg",
-                                            "image/png"
-                                        ],
-                                        "maxLength": 307200
-                                    },
-                                    "key": "userPicture"
-                                },
-                                {
-                                    "name": "NilValue",
-                                    "displayName": "NilValue",
-                                    "type": "object",
-                                    "required": true,
-                                    "properties": [
-                                        {
-                                            "name": "name",
-                                            "displayName": "name",
-                                            "type": "string",
-                                            "required": true,
-                                            "key": "name"
-                                        },
-                                        {
-                                            "name": "comment",
-                                            "displayName": "comment",
-                                            "type": "string?",
-                                            "required": true,
-                                            "key": "comment"
-                                        }
-                                    ],
-                                    "key": "NilValue"
-                                },
-                                {
-                                    "name": "CatOrDog",
-                                    "displayName": "CatOrDog",
-                                    "type": "ApiLib.Cat | ApiLib.Dog",
-                                    "required": true,
-                                    "key": "CatOrDog"
-                                },
-                                [
-                                    {
-                                        "name": "Cat",
-                                        "displayName": "Cat",
-                                        "type": "object",
-                                        "required": true,
-                                        "additionalProperties": true,
-                                        "properties": [
-                                            {
-                                                "type": "string",
-                                                "displayName": "name",
-                                                "name": "name",
-                                                "required": true,
-                                                "key": "name"
-                                            },
-                                            {
-                                                "type": "string",
-                                                "displayName": "color",
-                                                "name": "color",
-                                                "required": true,
-                                                "key": "color"
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "name": "Dog",
-                                        "displayName": "Dog",
-                                        "type": "object",
-                                        "required": true,
-                                        "additionalProperties": true,
-                                        "properties": [
-                                            {
-                                                "type": "string",
-                                                "displayName": "name",
-                                                "name": "name",
-                                                "required": true,
-                                                "key": "name"
-                                            },
-                                            {
-                                                "type": "string",
-                                                "displayName": "fangs",
-                                                "name": "fangs",
-                                                "required": true,
-                                                "key": "fangs"
-                                            }
-                                        ]
-                                    }
-                                ],
-                                {
-                                    "name": "CustomDate",
-                                    "displayName": "CustomDate",
-                                    "type": "date-only",
-                                    "required": true,
-                                    "fixedFacets": {
-                                        "noHolidays": true
-                                    },
-                                    "facets": {
-                                        "onlyFutureDates": {
-                                            "type": {
-                                                "type": "boolean"
-                                            }
-                                        },
-                                        "noHolidays": {
-                                            "type": {
-                                                "type": "boolean"
-                                            }
-                                        }
-                                    },
-                                    "key": "PossibleMeetingDate"
-                                }
-                            ],
-                            "key": "application/json"
-                        }
-                    ],
-                    "protocols": [
-                        "HTTP"
-                    ],
-                    "securedBy": [
-                        "custom_scheme"
-                    ],
-                    "method": "post",
-                    "allUriParameters": []
-                }
-            ],
-            "securedBy": [
-                "custom_scheme"
-            ],
-            "relativeUri": "/api",
-            "displayName": "/api",
-            "relativeUriPathSegments": [
-                "api"
-            ],
-            "absoluteUri": "http://{environment}.musicapi.com/{version}/api",
-            "parentUrl": "",
-            "uniqueId": "api",
-            "allUriParameters": []
-        },
-        {
-            "methods": [
-                {
-                    "responses": [
-                        {
-                            "code": "200",
-                            "body": [
-                                {
-                                    "name": "AnotherEntry",
-                                    "displayName": "AnotherEntry",
-                                    "type": "json",
-                                    "required": true,
-                                    "content": "{\n  \"type\": \"array\",\n  \"items\": {\n    \"$ref\": \"#/definitions/song\"\n  },\n  \"definitions\": {\n    \"song\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"title\": {\n          \"type\": \"string\"\n        },\n        \"artist\": {\n          \"type\": \"string\"\n        }\n      }\n    }\n  }\n}\n",
-                                    "description": "This is just another entry to simulate that you can add facets also on JSON\nschema defined types. Although you can only add documentation-based facets.\n",
-                                    "key": "application/json"
-                                }
-                            ],
-                            "key": "200"
-                        }
-                    ],
-                    "protocols": [
-                        "HTTP"
-                    ],
-                    "securedBy": [
-                        "custom_scheme"
-                    ],
-                    "method": "post",
-                    "allUriParameters": []
-                },
-                {
-                    "responses": [
-                        {
-                            "code": "200",
-                            "body": [
-                                {
-                                    "name": "application/json",
-                                    "displayName": "application/json",
-                                    "schema": [
-                                        "Entry"
-                                    ],
-                                    "required": true,
-                                    "key": "application/json"
-                                }
-                            ],
-                            "key": "200"
-                        }
-                    ],
-                    "protocols": [
-                        "HTTP"
-                    ],
-                    "securedBy": [
-                        "custom_scheme"
-                    ],
-                    "description": "returns a list of entry",
-                    "method": "get",
-                    "allUriParameters": []
-                }
-            ],
-            "type": "collection",
-            "securedBy": [
-                "custom_scheme"
-            ],
-            "relativeUri": "/entry",
-            "displayName": "/entry",
-            "relativeUriPathSegments": [
-                "entry"
-            ],
-            "absoluteUri": "http://{environment}.musicapi.com/{version}/entry",
-            "parentUrl": "",
-            "uniqueId": "entry",
-            "allUriParameters": []
-        },
-        {
-            "annotations": [
-                {
-                    "structuredValue": null,
-                    "name": "ready",
-                    "key": "ready"
-                }
-            ],
-            "methods": [
-                {
-                    "annotations": [
-                        {
-                            "structuredValue": 30,
-                            "name": "monitoringInterval",
-                            "key": "monitoringInterval"
-                        }
-                    ],
-                    "queryParameters": [
-                        {
-                            "name": "genre",
-                            "displayName": "genre",
-                            "type": "string",
-                            "required": true,
-                            "description": "filter the songs by genre",
-                            "key": "genre"
-                        },
-                        {
-                            "name": "access_token",
-                            "displayName": "access_token",
-                            "type": "string",
-                            "required": true,
-                            "key": "access_token"
-                        }
-                    ],
-                    "protocols": [
-                        "HTTP"
-                    ],
-                    "securedBy": [
-                        "oauth_2_0",
-                        null
-                    ],
-                    "method": "get",
-                    "allUriParameters": []
-                },
-                {
-                    "queryParameters": [
-                        {
-                            "name": "access_token",
-                            "displayName": "access_token",
-                            "type": "string",
-                            "required": true,
-                            "key": "access_token"
-                        }
-                    ],
-                    "protocols": [
-                        "HTTP"
-                    ],
-                    "securedBy": [
-                        "custom_scheme"
-                    ],
-                    "method": "post",
-                    "allUriParameters": []
-                }
-            ],
-            "is": [
-                "secured"
-            ],
-            "description": "Access to all songs inside the music world library.",
-            "securedBy": [
-                "custom_scheme"
-            ],
-            "relativeUri": "/songs",
-            "displayName": "Songs",
-            "resources": [
-                {
-                    "methods": [
-                        {
-                            "annotations": [
-                                {
-                                    "structuredValue": {
-                                        "date": "2016-02-28T16:41:41.090Z",
-                                        "deprecatedBy": {
-                                            "firstname": "Christian"
-                                        },
-                                        "comment": "no comment"
-                                    },
-                                    "name": "deprecated",
-                                    "key": "deprecated"
-                                }
-                            ],
-                            "responses": [
-                                {
-                                    "code": "200",
-                                    "body": [
-                                        {
-                                            "name": "Song",
-                                            "displayName": "Song",
-                                            "type": "object",
-                                            "required": true,
-                                            "additionalProperties": true,
-                                            "examples": [
-                                                "{\n  \"title\": \"My Song\",\n  \"length\": 12\n}",
-                                                "{\n  \"title\": \"Last\",\n  \"length\": 3\n}"
-                                            ],
-                                            "properties": [
-                                                {
-                                                    "type": "string",
-                                                    "displayName": "title",
-                                                    "name": "title",
-                                                    "required": true,
-                                                    "key": "title"
-                                                },
-                                                {
-                                                    "type": "number",
-                                                    "displayName": "length",
-                                                    "name": "length",
-                                                    "required": true,
-                                                    "key": "length"
-                                                }
-                                            ],
-                                            "key": "application/json"
-                                        },
-                                        {
-                                            "name": "application/xml",
-                                            "displayName": "application/xml",
-                                            "type": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"\n  elementFormDefault=\"qualified\" attributeFormDefault=\"unqualified\">\n  <xs:element name=\"song\">\n    <xs:complexType>\n      <xs:sequence>\n        <xs:element name=\"title\" type=\"xs:string\" />\n        <xs:element name=\"artist\" type=\"xs:string\" />\n      </xs:sequence>\n    </xs:complexType>\n  </xs:element>\n</xs:schema>\n",
-                                            "required": true,
-                                            "examples": [
-                                                "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<song>\n  <title>str1234</title>\n  <artist>str1234</artist>\n</song>\n"
-                                            ],
-                                            "key": "application/xml"
-                                        }
-                                    ],
-                                    "key": "200"
-                                }
-                            ],
-                            "protocols": [
-                                "HTTP"
-                            ],
-                            "securedBy": [
-                                "custom_scheme"
-                            ],
-                            "method": "get",
-                            "allUriParameters": [
-                                {
-                                    "name": "songId",
-                                    "displayName": "songId",
-                                    "type": "string",
-                                    "required": true,
-                                    "key": "songId"
-                                }
-                            ]
-                        }
-                    ],
-                    "securedBy": [
-                        "custom_scheme"
-                    ],
-                    "uriParameters": [
-                        {
-                            "name": "songId",
-                            "displayName": "songId",
-                            "type": "string",
-                            "required": true,
-                            "key": "songId"
-                        }
-                    ],
-                    "relativeUri": "/{songId}",
-                    "displayName": "/{songId}",
-                    "relativeUriPathSegments": [
-                        "{songId}"
-                    ],
-                    "absoluteUri": "http://{environment}.musicapi.com/{version}/songs/{songId}",
-                    "parentUrl": "/songs",
-                    "uniqueId": "songs__songid_",
-                    "allUriParameters": [
-                        {
-                            "name": "songId",
-                            "displayName": "songId",
-                            "type": "string",
-                            "required": true,
-                            "key": "songId"
-                        }
-                    ]
-                }
-            ],
-            "relativeUriPathSegments": [
-                "songs"
-            ],
-            "absoluteUri": "http://{environment}.musicapi.com/{version}/songs",
-            "parentUrl": "",
-            "uniqueId": "songs",
-            "allUriParameters": []
-        }
-    ],
-    "documentation": [
-        {
-            "title": "Getting Started",
-            "content": "This is a getting started guide for the World Music API.\n",
-            "uniqueId": "getting_started"
-        },
-        {
-            "title": "Legal",
-            "content": "See http://legal.musicapi.com",
-            "uniqueId": "legal"
-        }
-    ],
-    "scalarsAnnotations": {
-        "baseUri": [
+              ],
+              "key": "environment"
+            },
             {
-                "structuredValue": true,
-                "name": "rediractable"
-            }
-        ]
-    },
-    "types": {
-        "Comment": {
-            "additionalProperties": true,
-            "type": "object",
-            "displayName": "Comment",
-            "name": "Comment",
-            "required": true,
-            "properties": {
-                "author": {
-                    "type": "string",
-                    "displayName": "author",
-                    "name": "author",
-                    "required": true
-                },
-                "body": {
-                    "type": "string",
-                    "displayName": "body",
-                    "name": "body",
-                    "required": true
-                },
-                "date": {
-                    "type": "integer",
-                    "displayName": "date",
-                    "name": "date",
-                    "required": true
-                },
-                "editAuthor": {
-                    "type": "string",
-                    "displayName": "editAuthor",
-                    "name": "editAuthor",
-                    "required": false
-                },
-                "edited": {
-                    "type": "integer",
-                    "displayName": "edited",
-                    "name": "edited",
-                    "required": false
-                }
-            }
-        },
-        "Entry": {
-            "type": "json",
-            "content": "{\n  \"type\": \"array\",\n  \"items\": {\n    \"$ref\": \"#/definitions/song\"\n  },\n  \"definitions\": {\n    \"song\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"title\": {\n          \"type\": \"string\"\n        },\n        \"artist\": {\n          \"type\": \"string\"\n        }\n      }\n    }\n  }\n}\n",
-            "displayName": "Entry",
-            "name": "Entry",
-            "required": true
-        },
-        "AnotherEntry": {
-            "type": "json",
-            "content": "{\n  \"type\": \"array\",\n  \"items\": {\n    \"$ref\": \"#/definitions/song\"\n  },\n  \"definitions\": {\n    \"song\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"title\": {\n          \"type\": \"string\"\n        },\n        \"artist\": {\n          \"type\": \"string\"\n        }\n      }\n    }\n  }\n}\n",
-            "displayName": "AnotherEntry",
-            "name": "AnotherEntry",
-            "required": true,
-            "description": "This is just another entry to simulate that you can add facets also on JSON\nschema defined types. Although you can only add documentation-based facets.\n"
-        },
-        "User": {
-            "additionalProperties": true,
-            "type": "object",
-            "displayName": "User",
-            "name": "User",
-            "required": true,
-            "properties": {
-                "firstname": {
-                    "type": "string",
-                    "displayName": "firstname",
-                    "name": "firstname",
-                    "required": true,
-                    "key": "firstname"
-                },
-                "lastname": {
-                    "type": "string",
-                    "displayName": "lastname",
-                    "name": "lastname",
-                    "required": false,
-                    "examples": [
-                        "Doe"
-                    ],
-                    "key": "lastname"
-                }
+              "name": "version",
+              "displayName": "version",
+              "type": "string",
+              "required": true,
+              "enum": [
+                "v1"
+              ],
+              "key": "version"
             },
-            "examples": [
-                "{\n  \"firstname\": \"John\"\n}"
-            ]
-        },
-        "ApiLib.RamlDataType": {
-            "name": "RamlDataType",
-            "displayName": "RamlDataType",
-            "type": "object",
-            "required": true,
-            "properties": {
-                "propString": {
-                    "name": "propString",
-                    "displayName": "propString",
-                    "type": "string",
-                    "required": true,
-                    "key": "propString"
-                },
-                "propStringArray1": {
-                    "name": "propStringArray1",
-                    "displayName": "propStringArray1",
-                    "type": "array",
-                    "required": true,
-                    "items": "string",
-                    "key": "propStringArray1"
-                },
-                "ideas": {
-                    "name": "ideas",
-                    "displayName": "ideas",
-                    "type": "array",
-                    "required": true,
-                    "items": {
-                        "name": "items",
-                        "displayName": "items",
-                        "type": "object",
-                        "required": true,
-                        "properties": [
-                            {
-                                "name": "comment",
-                                "displayName": "comment",
-                                "type": "string",
-                                "required": true,
-                                "key": "comment"
-                            }
-                        ]
-                    },
-                    "key": "ideas"
-                },
-                "extIdeas": {
-                    "name": "extIdeas",
-                    "displayName": "extIdeas",
-                    "required": true,
-                    "properties": [
-                        {
-                            "name": "createdBy",
-                            "displayName": "createdBy",
-                            "type": "string",
-                            "required": true,
-                            "key": "createdBy"
-                        }
-                    ],
-                    "type": {
-                        "name": "type",
-                        "displayName": "type",
-                        "type": "object",
-                        "required": true,
-                        "properties": [
-                            {
-                                "name": "comment",
-                                "displayName": "comment",
-                                "type": "string",
-                                "required": true,
-                                "__METADATA__": {
-                                    "primitiveValuesMeta": {
-                                        "displayName": {
-                                            "calculated": true
-                                        },
-                                        "required": {
-                                            "insertedAsDefault": true
-                                        }
-                                    }
-                                },
-                                "key": "comment"
-                            }
-                        ],
-                        "__METADATA__": {
-                            "primitiveValuesMeta": {
-                                "displayName": {
-                                    "calculated": true
-                                },
-                                "type": {
-                                    "insertedAsDefault": true
-                                },
-                                "required": {
-                                    "insertedAsDefault": true
-                                }
-                            }
-                        }
-                    },
-                    "key": "extIdeas"
-                },
-                "feedback": {
-                    "name": "feedback",
-                    "displayName": "feedback",
-                    "type": "string",
-                    "default": "very nice",
-                    "required": true,
-                    "pattern": "[a-zA-Z\\s]*",
-                    "minLength": 1,
-                    "maxLength": 255,
-                    "examples": [
-                        "very well made"
-                    ],
-                    "key": "feedback"
-                },
-                "propNumber": {
-                    "name": "propNumber",
-                    "displayName": "propNumber",
-                    "type": "number",
-                    "required": true,
-                    "minimum": 0,
-                    "maximum": 32,
-                    "format": "int32",
-                    "multipleOf": 2,
-                    "fixedFacets": {
-                        "format": "int32"
-                    },
-                    "key": "propNumber"
-                },
-                "propInteger": {
-                    "name": "propInteger",
-                    "displayName": "propInteger",
-                    "type": "integer",
-                    "required": true,
-                    "minimum": 3,
-                    "maximum": 5,
-                    "format": "int8",
-                    "multipleOf": 1,
-                    "fixedFacets": {
-                        "format": "int8"
-                    },
-                    "key": "propInteger"
-                },
-                "propBoolean": {
-                    "name": "propBoolean",
-                    "displayName": "propBoolean",
-                    "type": "boolean",
-                    "required": true,
-                    "key": "propBoolean"
-                },
-                "propDate": {
-                    "name": "propDate",
-                    "displayName": "propDate",
-                    "type": "date-only",
-                    "required": true,
-                    "examples": [
-                        "2015-05-23"
-                    ],
-                    "key": "propDate"
-                },
-                "userPicture": {
-                    "name": "userPicture",
-                    "displayName": "userPicture",
-                    "type": "file",
-                    "required": true,
-                    "fileTypes": [
-                        {},
-                        {}
-                    ],
-                    "maxLength": 307200,
-                    "fixedFacets": {
-                        "fileTypes": [
-                            "image/jpeg",
-                            "image/png"
-                        ],
-                        "maxLength": 307200
-                    },
-                    "key": "userPicture"
-                },
-                "NilValue": {
-                    "name": "NilValue",
-                    "displayName": "NilValue",
-                    "type": "object",
-                    "required": true,
-                    "properties": [
-                        {
-                            "name": "name",
-                            "displayName": "name",
-                            "type": "string",
-                            "required": true,
-                            "key": "name"
-                        },
-                        {
-                            "name": "comment",
-                            "displayName": "comment",
-                            "type": "string?",
-                            "required": true,
-                            "key": "comment"
-                        }
-                    ],
-                    "key": "NilValue"
-                },
-                "CatOrDog": {
-                    "name": "CatOrDog",
-                    "displayName": "CatOrDog",
-                    "type": "ApiLib.Cat | ApiLib.Dog",
-                    "required": true,
-                    "key": "CatOrDog"
-                },
-                "CatAndDog": [
-                    {
-                        "name": "Cat",
-                        "displayName": "Cat",
-                        "type": "object",
-                        "required": true,
-                        "additionalProperties": true,
-                        "properties": [
-                            {
-                                "type": "string",
-                                "displayName": "name",
-                                "name": "name",
-                                "required": true,
-                                "key": "name"
-                            },
-                            {
-                                "type": "string",
-                                "displayName": "color",
-                                "name": "color",
-                                "required": true,
-                                "key": "color"
-                            }
-                        ]
-                    },
-                    {
-                        "name": "Dog",
-                        "displayName": "Dog",
-                        "type": "object",
-                        "required": true,
-                        "additionalProperties": true,
-                        "properties": [
-                            {
-                                "type": "string",
-                                "displayName": "name",
-                                "name": "name",
-                                "required": true,
-                                "key": "name"
-                            },
-                            {
-                                "type": "string",
-                                "displayName": "fangs",
-                                "name": "fangs",
-                                "required": true,
-                                "key": "fangs"
-                            }
-                        ]
-                    }
-                ],
-                "PossibleMeetingDate": {
-                    "name": "CustomDate",
-                    "displayName": "CustomDate",
-                    "type": "date-only",
-                    "required": true,
-                    "fixedFacets": {
-                        "noHolidays": true
-                    },
-                    "facets": {
-                        "onlyFutureDates": {
-                            "type": {
-                                "type": "boolean"
-                            }
-                        },
-                        "noHolidays": {
-                            "type": {
-                                "type": "boolean"
-                            }
-                        }
-                    },
-                    "key": "PossibleMeetingDate"
-                }
+            {
+              "name": "songId",
+              "displayName": "songId",
+              "type": "string",
+              "required": true,
+              "key": "songId"
             }
-        },
-        "ApiLib.Cat": {
-            "additionalProperties": true,
-            "type": "object",
-            "displayName": "Cat",
-            "name": "Cat",
-            "required": true,
-            "properties": {
-                "name": {
-                    "type": "string",
-                    "displayName": "name",
-                    "name": "name",
-                    "required": true,
-                    "key": "name"
-                },
-                "color": {
-                    "type": "string",
-                    "displayName": "color",
-                    "name": "color",
-                    "required": true,
-                    "key": "color"
-                }
+          ],
+          "queryParameters": [],
+          "headers": [
+            {
+              "name": "SpecialToken",
+              "displayName": "SpecialToken",
+              "type": "string",
+              "required": true,
+              "description": "Used to send a custom token.\n",
+              "key": "SpecialToken"
             }
-        },
-        "ApiLib.Dog": {
-            "additionalProperties": true,
-            "type": "object",
-            "displayName": "Dog",
-            "name": "Dog",
-            "required": true,
-            "properties": {
-                "name": {
-                    "type": "string",
-                    "displayName": "name",
-                    "name": "name",
-                    "required": true,
-                    "key": "name"
-                },
-                "fangs": {
-                    "type": "string",
-                    "displayName": "fangs",
-                    "name": "fangs",
-                    "required": true,
-                    "key": "fangs"
-                }
-            }
-        },
-        "ApiLib.CustomDate": {
-            "type": "date-only",
-            "displayName": "CustomDate",
-            "name": "CustomDate",
-            "facets": {
-                "onlyFutureDates": {
-                    "type": {
-                        "type": "boolean"
-                    }
-                },
-                "noHolidays": {
-                    "type": {
-                        "type": "boolean"
-                    }
-                }
+          ],
+          "responses": [
+            {
+              "code": "401",
+              "description": "Bad token.\n"
             },
-            "required": true
-        },
-        "SongsLib.Song": {
-            "additionalProperties": true,
-            "type": "object",
-            "displayName": "Song",
-            "name": "Song",
-            "examples": [
-                "{\n  \"title\": \"My Song\",\n  \"length\": 12\n}",
-                "{\n  \"title\": \"Last\",\n  \"length\": 3\n}"
-            ],
-            "required": true,
-            "properties": {
-                "title": {
-                    "type": "string",
-                    "displayName": "title",
-                    "name": "title",
-                    "required": true,
-                    "key": "title"
-                },
-                "length": {
-                    "type": "number",
-                    "displayName": "length",
-                    "name": "length",
-                    "required": true,
-                    "key": "length"
-                }
+            {
+              "code": "403"
             }
+          ]
         }
+      ],
+      "relativeUriPathSegments": [
+        "songs"
+      ],
+      "absoluteUri": "http://{environment}.musicapi.com/{version}/songs",
+      "parentUrl": "",
+      "allUriParameters": [
+        {
+          "name": "environment",
+          "displayName": "environment",
+          "type": "string",
+          "required": true,
+          "enum": [
+            "stg",
+            "dev",
+            "test",
+            "prod"
+          ],
+          "key": "environment"
+        },
+        {
+          "name": "version",
+          "displayName": "version",
+          "type": "string",
+          "required": true,
+          "enum": [
+            "v1"
+          ],
+          "key": "version"
+        }
+      ],
+      "queryParameters": [],
+      "headers": [
+        {
+          "name": "SpecialToken",
+          "displayName": "SpecialToken",
+          "type": "string",
+          "required": true,
+          "description": "Used to send a custom token.\n",
+          "key": "SpecialToken"
+        }
+      ],
+      "responses": [
+        {
+          "code": "401",
+          "description": "Bad token.\n"
+        },
+        {
+          "code": "403"
+        }
+      ]
     }
+  ],
+  "documentation": [
+    {
+      "title": "Getting Started",
+      "content": "This is a getting started guide for the World Music API.\n"
+    },
+    {
+      "title": "Legal",
+      "content": "See http://legal.musicapi.com"
+    }
+  ],
+  "scalarsAnnotations": {
+    "baseUri": [
+      {
+        "structuredValue": true,
+        "name": "rediractable"
+      }
+    ]
+  },
+  "types": {
+    "Comment": {
+      "additionalProperties": true,
+      "type": "object",
+      "displayName": "Comment",
+      "name": "Comment",
+      "required": true,
+      "properties": {
+        "author": {
+          "type": "string",
+          "displayName": "author",
+          "name": "author",
+          "required": true
+        },
+        "body": {
+          "type": "string",
+          "displayName": "body",
+          "name": "body",
+          "required": true
+        },
+        "date": {
+          "type": "integer",
+          "displayName": "date",
+          "name": "date",
+          "required": true
+        },
+        "editAuthor": {
+          "type": "string",
+          "displayName": "editAuthor",
+          "name": "editAuthor",
+          "required": false
+        },
+        "edited": {
+          "type": "integer",
+          "displayName": "edited",
+          "name": "edited",
+          "required": false
+        }
+      }
+    },
+    "Entry": {
+      "type": "json",
+      "content": "{\n  \"type\": \"array\",\n  \"items\": {\n    \"$ref\": \"#/definitions/song\"\n  },\n  \"definitions\": {\n    \"song\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"title\": {\n          \"type\": \"string\"\n        },\n        \"artist\": {\n          \"type\": \"string\"\n        }\n      }\n    }\n  }\n}\n",
+      "displayName": "Entry",
+      "name": "Entry",
+      "required": true
+    },
+    "AnotherEntry": {
+      "type": "json",
+      "content": "{\n  \"type\": \"array\",\n  \"items\": {\n    \"$ref\": \"#/definitions/song\"\n  },\n  \"definitions\": {\n    \"song\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"title\": {\n          \"type\": \"string\"\n        },\n        \"artist\": {\n          \"type\": \"string\"\n        }\n      }\n    }\n  }\n}\n",
+      "displayName": "AnotherEntry",
+      "name": "AnotherEntry",
+      "required": true,
+      "description": "This is just another entry to simulate that you can add facets also on JSON\nschema defined types. Although you can only add documentation-based facets.\n"
+    },
+    "User": {
+      "additionalProperties": true,
+      "type": "object",
+      "displayName": "User",
+      "name": "User",
+      "required": true,
+      "properties": {
+        "firstname": {
+          "type": "string",
+          "displayName": "firstname",
+          "name": "firstname",
+          "required": true,
+          "key": "firstname"
+        },
+        "lastname": {
+          "type": "string",
+          "displayName": "lastname",
+          "name": "lastname",
+          "required": false,
+          "examples": [
+            "Doe"
+          ],
+          "key": "lastname"
+        }
+      },
+      "examples": [
+        "{\n  \"firstname\": \"John\"\n}"
+      ]
+    },
+    "ApiLib.RamlDataType": {
+      "name": "RamlDataType",
+      "displayName": "RamlDataType",
+      "type": "object",
+      "required": true,
+      "properties": {
+        "propString": {
+          "name": "propString",
+          "displayName": "propString",
+          "type": "string",
+          "required": true,
+          "key": "propString"
+        },
+        "propStringArray1": {
+          "name": "propStringArray1",
+          "displayName": "propStringArray1",
+          "type": "array",
+          "required": true,
+          "items": "string",
+          "key": "propStringArray1"
+        },
+        "ideas": {
+          "name": "ideas",
+          "displayName": "ideas",
+          "type": "array",
+          "required": true,
+          "items": {
+            "name": "items",
+            "displayName": "items",
+            "type": "object",
+            "required": true,
+            "properties": [
+              {
+                "name": "comment",
+                "displayName": "comment",
+                "type": "string",
+                "required": true,
+                "key": "comment"
+              }
+            ]
+          },
+          "key": "ideas"
+        },
+        "extIdeas": {
+          "name": "extIdeas",
+          "displayName": "extIdeas",
+          "required": true,
+          "properties": [
+            {
+              "name": "createdBy",
+              "displayName": "createdBy",
+              "type": "string",
+              "required": true,
+              "key": "createdBy"
+            }
+          ],
+          "type": {
+            "name": "type",
+            "displayName": "type",
+            "type": "object",
+            "required": true,
+            "properties": [
+              {
+                "name": "comment",
+                "displayName": "comment",
+                "type": "string",
+                "required": true,
+                "key": "comment"
+              }
+            ]
+          },
+          "key": "extIdeas"
+        },
+        "feedback": {
+          "name": "feedback",
+          "displayName": "feedback",
+          "type": "string",
+          "default": "very nice",
+          "required": true,
+          "pattern": "[a-zA-Z\\s]*",
+          "minLength": 1,
+          "maxLength": 255,
+          "examples": [
+            "very well made"
+          ],
+          "key": "feedback"
+        },
+        "propNumber": {
+          "name": "propNumber",
+          "displayName": "propNumber",
+          "type": "number",
+          "required": true,
+          "minimum": 0,
+          "maximum": 32,
+          "format": "int32",
+          "multipleOf": 2,
+          "fixedFacets": {
+            "format": "int32"
+          },
+          "key": "propNumber"
+        },
+        "propInteger": {
+          "name": "propInteger",
+          "displayName": "propInteger",
+          "type": "integer",
+          "required": true,
+          "minimum": 3,
+          "maximum": 5,
+          "format": "int8",
+          "multipleOf": 1,
+          "fixedFacets": {
+            "format": "int8"
+          },
+          "key": "propInteger"
+        },
+        "propBoolean": {
+          "name": "propBoolean",
+          "displayName": "propBoolean",
+          "type": "boolean",
+          "required": true,
+          "key": "propBoolean"
+        },
+        "propDate": {
+          "name": "propDate",
+          "displayName": "propDate",
+          "type": "date-only",
+          "required": true,
+          "examples": [
+            "2015-05-23"
+          ],
+          "key": "propDate"
+        },
+        "userPicture": {
+          "name": "userPicture",
+          "displayName": "userPicture",
+          "type": "file",
+          "required": true,
+          "fileTypes": [
+            {},
+            {}
+          ],
+          "maxLength": 307200,
+          "fixedFacets": {
+            "fileTypes": [
+              "image/jpeg",
+              "image/png"
+            ],
+            "maxLength": 307200
+          },
+          "key": "userPicture"
+        },
+        "NilValue": {
+          "name": "NilValue",
+          "displayName": "NilValue",
+          "type": "object",
+          "required": true,
+          "properties": [
+            {
+              "name": "name",
+              "displayName": "name",
+              "type": "string",
+              "required": true,
+              "key": "name"
+            },
+            {
+              "name": "comment",
+              "displayName": "comment",
+              "type": "string?",
+              "required": true,
+              "key": "comment"
+            }
+          ],
+          "key": "NilValue"
+        },
+        "CatOrDog": {
+          "name": "CatOrDog",
+          "displayName": "CatOrDog",
+          "type": "ApiLib.Cat | ApiLib.Dog",
+          "required": true,
+          "key": "CatOrDog"
+        },
+        "CatAndDog": [
+          {
+            "name": "Cat",
+            "displayName": "Cat",
+            "type": "object",
+            "required": true,
+            "additionalProperties": true,
+            "properties": [
+              {
+                "type": "string",
+                "displayName": "name",
+                "name": "name",
+                "required": true,
+                "key": "name"
+              },
+              {
+                "type": "string",
+                "displayName": "color",
+                "name": "color",
+                "required": true,
+                "key": "color"
+              }
+            ]
+          },
+          {
+            "name": "Dog",
+            "displayName": "Dog",
+            "type": "object",
+            "required": true,
+            "additionalProperties": true,
+            "properties": [
+              {
+                "type": "string",
+                "displayName": "name",
+                "name": "name",
+                "required": true,
+                "key": "name"
+              },
+              {
+                "type": "string",
+                "displayName": "fangs",
+                "name": "fangs",
+                "required": true,
+                "key": "fangs"
+              }
+            ]
+          }
+        ],
+        "PossibleMeetingDate": {
+          "name": "CustomDate",
+          "displayName": "CustomDate",
+          "type": "date-only",
+          "required": true,
+          "fixedFacets": {
+            "noHolidays": true
+          },
+          "facets": {
+            "onlyFutureDates": {
+              "type": {
+                "type": "boolean"
+              }
+            },
+            "noHolidays": {
+              "type": {
+                "type": "boolean"
+              }
+            }
+          },
+          "key": "PossibleMeetingDate"
+        }
+      }
+    },
+    "ApiLib.Cat": {
+      "additionalProperties": true,
+      "type": "object",
+      "displayName": "Cat",
+      "name": "Cat",
+      "required": true,
+      "properties": {
+        "name": {
+          "type": "string",
+          "displayName": "name",
+          "name": "name",
+          "required": true,
+          "key": "name"
+        },
+        "color": {
+          "type": "string",
+          "displayName": "color",
+          "name": "color",
+          "required": true,
+          "key": "color"
+        }
+      }
+    },
+    "ApiLib.Dog": {
+      "additionalProperties": true,
+      "type": "object",
+      "displayName": "Dog",
+      "name": "Dog",
+      "required": true,
+      "properties": {
+        "name": {
+          "type": "string",
+          "displayName": "name",
+          "name": "name",
+          "required": true,
+          "key": "name"
+        },
+        "fangs": {
+          "type": "string",
+          "displayName": "fangs",
+          "name": "fangs",
+          "required": true,
+          "key": "fangs"
+        }
+      }
+    },
+    "ApiLib.CustomDate": {
+      "type": "date-only",
+      "displayName": "CustomDate",
+      "name": "CustomDate",
+      "facets": {
+        "onlyFutureDates": {
+          "type": {
+            "type": "boolean"
+          }
+        },
+        "noHolidays": {
+          "type": {
+            "type": "boolean"
+          }
+        }
+      },
+      "required": true
+    },
+    "SongsLib.Song": {
+      "additionalProperties": true,
+      "type": "object",
+      "displayName": "Song",
+      "name": "Song",
+      "examples": [
+        "{\n  \"title\": \"My Song\",\n  \"length\": 12\n}",
+        "{\n  \"title\": \"Last\",\n  \"length\": 3\n}"
+      ],
+      "required": true,
+      "properties": {
+        "title": {
+          "type": "string",
+          "displayName": "title",
+          "name": "title",
+          "required": true,
+          "key": "title"
+        },
+        "length": {
+          "type": "number",
+          "displayName": "length",
+          "name": "length",
+          "required": true,
+          "key": "length"
+        }
+      }
+    }
+  }
 }

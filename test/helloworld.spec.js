@@ -2,17 +2,17 @@
 
 const raml2obj = require('..');
 const assert = require('assert');
+const parser = require('./parser');
 
 describe('raml2obj', () => {
   describe('helloworld.raml', () => {
     let obj;
 
-    before((done) => {
-      raml2obj.parse('test/helloworld.raml').then((result) => {
+    before(() => {
+      return parser('helloworld.raml')
+      .then(result => raml2obj.parse(result))
+      .then((result) => {
         obj = result;
-        done();
-      }, (error) => {
-        console.log('error', error);
       });
     });
 
@@ -31,11 +31,9 @@ describe('raml2obj', () => {
 
       assert.strictEqual(first.title, 'Welcome');
       assert.strictEqual(first.content, 'Welcome to the Example Documentation. The Example API allows you\nto do stuff. See also [example.com](https://www.example.com).\n');
-      assert.strictEqual(first.uniqueId, 'welcome');
 
       assert.strictEqual(second.title, 'Chapter two');
       assert.strictEqual(second.content, 'More content here. Including **bold** text!\n');
-      assert.strictEqual(second.uniqueId, 'chapter_two');
     });
 
     it('should test the top level /helloworld resource', () => {
@@ -45,8 +43,7 @@ describe('raml2obj', () => {
       assert.strictEqual(resource.displayName, '/helloworld');
       assert.strictEqual(resource.description, 'This is the top level description for /helloworld.');
       assert.strictEqual(resource.parentUrl, '');
-      assert.strictEqual(resource.uniqueId, 'helloworld');
-      assert.deepEqual(resource.allUriParameters, []);
+      assert.deepEqual(resource.allUriParameters, obj.baseUriParameters);
     });
 
     it('should test the /helloworld methods', () => {
@@ -57,7 +54,7 @@ describe('raml2obj', () => {
       const method = methods[0];
 
       assert.strictEqual(method.method, 'get');
-      assert.deepEqual(method.allUriParameters, []);
+      assert.deepEqual(method.allUriParameters, obj.baseUriParameters);
       assert.deepEqual(method.responses.length, 1);
 
       const response = method.responses[0];
@@ -79,8 +76,7 @@ describe('raml2obj', () => {
       assert.strictEqual(resource.relativeUri, '/test');
       assert.strictEqual(resource.displayName, 'TEST');
       assert.strictEqual(resource.parentUrl, '/helloworld');
-      assert.strictEqual(resource.uniqueId, 'helloworld_test');
-      assert.deepEqual(resource.allUriParameters, []);
+      assert.deepEqual(resource.allUriParameters, obj.baseUriParameters);
     });
   });
 });

@@ -2,17 +2,18 @@
 
 const raml2obj = require('..');
 const assert = require('assert');
+const parser = require('./parser');
 
 describe('raml2obj', () => {
   describe('inheritance.raml', () => {
     let obj;
-
-    before((done) => {
-      raml2obj.parse('test/inheritance.raml').then((result) => {
+    let properties;
+    before(() => {
+      return parser('inheritance.raml')
+      .then(result => raml2obj.parse(result))
+      .then((result) => {
         obj = result;
-        done();
-      }, (error) => {
-        console.log('error', error);
+        properties = obj.resources[0].methods[0].body[0].properties;
       });
     });
 
@@ -21,10 +22,12 @@ describe('raml2obj', () => {
       assert.strictEqual(obj.resources.length, 1);
     });
 
-    it('should test type inheritance', () => {
-      const properties = obj.resources[0].methods[0].body[0].properties;
+    it('should contain inheritated and inline defined properties', () => {
+      assert.strictEqual(properties.length, 5);
+    });
 
-      assert.strictEqual(properties.length, 4);
+    it('should test type inheritance', () => {
+
       assert.strictEqual(properties[0].displayName, 'name');
       assert.strictEqual(properties[0].type, 'string');
 
