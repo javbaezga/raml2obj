@@ -10,14 +10,22 @@ function makeConsistent(obj, types) {
       }
 
       if (types && types[obj.type]) {
-        var typedef = types[obj.type];
-        var objectExamples = [];
+        let typedef = types[obj.type];
+        let objectExamples = [];
         if (obj.examples && typedef.examples) {
           objectExamples = obj.examples;
         }
         if (obj.example && typedef.example) {
           objectExamples.push(obj.example);
         }
+        let objectProperties = obj.properties;
+        let objectItems = obj.items;
+        let objectDefault = obj.default;
+        // let objectDisplayName = obj.displayName; // Don't do this or body will have ugly name.
+        let objectDescription = obj.description;
+        let objectEnum = obj.enum;
+        // First remember current value of the object properties
+        // and then override type's value.
         Object.assign(obj, types[obj.type]);
         if (objectExamples.length) {
           if (!obj.examples || !obj.examples.length) {
@@ -26,6 +34,24 @@ function makeConsistent(obj, types) {
           objectExamples.forEach(function(item) {
             obj.examples.push(item);
           });
+        }
+        if (objectProperties) {
+          Object.assign(obj.properties, objectProperties);
+        }
+        if (objectItems) {
+          Object.assign(obj.items, objectItems);
+        }
+        if (objectDefault) {
+          obj.default = objectDefault;
+        }
+        // if (objectDisplayName) {
+        //   obj.displayName = objectDisplayName;
+        // }
+        if (objectDescription) {
+          obj.description = objectDescription;
+        }
+        if (objectEnum) {
+          obj.enum = objectEnum;
         }
       }
     }
