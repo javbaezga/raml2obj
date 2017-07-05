@@ -113,7 +113,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }
 
     function makeConsistent(obj, types) {
-      if (_isObject(obj)) {
+      if (Array.isArray(obj)) {
+        obj.forEach(function (value) {
+          makeConsistent(value, types);
+        });
+      } else if (_isObject(obj)) {
         if (obj.type) {
           if (Array.isArray(obj.type)) {
             obj.type = obj.type[0];
@@ -128,7 +132,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             if (obj.example && typedef.example) {
               objectExamples.push(obj.example);
             }
+            var objectProperties = obj.properties;
+            var objectItems = obj.items;
+            var objectDefault = obj.default;
+            // let objectDisplayName = obj.displayName; // Don't do this or body will have ugly name.
+            var objectDescription = obj.description;
+            var objectEnum = obj.enum;
+            // First remember current value of the object properties
+            // and then override type's value.
             Object.assign(obj, types[obj.type]);
+            obj.__typeConsistent = true;
             if (objectExamples.length) {
               if (!obj.examples || !obj.examples.length) {
                 obj.examples = [];
@@ -136,6 +149,24 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
               objectExamples.forEach(function (item) {
                 obj.examples.push(item);
               });
+            }
+            if (objectProperties) {
+              Object.assign(obj.properties, objectProperties);
+            }
+            if (objectItems) {
+              Object.assign(obj.items, objectItems);
+            }
+            if (objectDefault) {
+              obj.default = objectDefault;
+            }
+            // if (objectDisplayName) {
+            //   obj.displayName = objectDisplayName;
+            // }
+            if (objectDescription) {
+              obj.description = objectDescription;
+            }
+            if (objectEnum) {
+              obj.enum = objectEnum;
             }
           }
         }
@@ -160,13 +191,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           delete obj.structuredExample;
         }
 
-        Object.keys(obj).forEach(function (key) {
-          var value = obj[key];
-          makeConsistent(value, types);
-        });
-      } else if (Array.isArray(obj)) {
-        obj.forEach(function (value) {
-          makeConsistent(value, types);
+        var keys = Object.keys(obj);
+        keys.forEach(function (key) {
+          if (obj.__typeConsistent && ['properties', 'items'].indexOf(key) !== -1) {
+            return;
+          }
+          makeConsistent(obj[key], types);
         });
       }
 
@@ -477,6 +507,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         key: "_expandType",
         value: function _expandType(types, key) {
           return new Promise(function (resolve) {
+            // var datatype_expansion = {
+            //   js: require('datatype-expansion')
+            // };
             // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
             datatype_expansion.js.expandedForm(types[key], types, function (err, expanded) {
               if (expanded) {
