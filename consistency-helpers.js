@@ -3,7 +3,11 @@ function _isObject(obj) {
 }
 
 function makeConsistent(obj, types) {
-  if (_isObject(obj)) {
+  if (Array.isArray(obj)) {
+    obj.forEach((value) => {
+      makeConsistent(value, types);
+    });
+  } else if (_isObject(obj)) {
     if (obj.type) {
       if (Array.isArray(obj.type)) {
         obj.type = obj.type[0];
@@ -27,6 +31,7 @@ function makeConsistent(obj, types) {
         // First remember current value of the object properties
         // and then override type's value.
         Object.assign(obj, types[obj.type]);
+        obj.__typeConsistent = true;
         if (objectExamples.length) {
           if (!obj.examples || !obj.examples.length) {
             obj.examples = [];
@@ -74,13 +79,12 @@ function makeConsistent(obj, types) {
       delete obj.structuredExample;
     }
 
-    Object.keys(obj).forEach((key) => {
-      const value = obj[key];
-      makeConsistent(value, types);
-    });
-  } else if (Array.isArray(obj)) {
-    obj.forEach((value) => {
-      makeConsistent(value, types);
+    var keys = Object.keys(obj);
+    keys.forEach((key) => {
+      if (obj.__typeConsistent && ['properties', 'items'].indexOf(key) !== -1) {
+        return;
+      }
+      makeConsistent(obj[key], types);
     });
   }
 
