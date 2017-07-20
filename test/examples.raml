@@ -1,0 +1,27 @@
+#%RAML 1.0
+title: Test
+description: Test of array support
+version: v1
+
+types:
+  Foo:
+    properties:
+      id:
+        type: string
+        examples:
+          Some-test-example: test-1
+          Other-example: test-2
+      test:
+        type: number
+        example: 5
+    example:
+      id: test-type-example
+      test: 1
+/foos:
+  post:
+    body:
+      application/json:
+        type: Foo
+        example:
+          id: test-inline
+          test: 12
