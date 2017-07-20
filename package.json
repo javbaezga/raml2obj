@@ -43,8 +43,8 @@
   },
   "files": [
     "index.js",
-    "arrays-objects-helpers.js",
-    "consistency-helpers.js"
+    "lib",
+    "browser.js"
   ],
   "engines": {
     "node": ">=4"
