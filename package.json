@@ -13,6 +13,7 @@
     "datatype-expansion": "0.0.15"
   },
   "devDependencies": {
+    "chai": "^4.1.0",
     "babel-cli": "^6.18.0",
     "babel-preset-es2015": "^6.18.0",
     "eslint": "3.11.x",
@@ -38,7 +39,7 @@
     "lint": "eslint ./",
     "lintfix": "eslint --fix ./",
     "test": "mocha 'test/*.spec.js' --reporter progress",
-    "browser": "./node_modules/.bin/browserify browser.js -o build/browserified.js && ./node_modules/.bin/babel build/browserified.js > build/babeled.js && ./node_modules/.bin/uglifyjs --screw-ie8 build/babeled.js > build/raml2object.js && cp build/raml2object.js ../raml-json-enhance/raml2object.js"
+    "browser": "./node_modules/.bin/browserify browser.js -o build/browserified.js --ignore datatype-expansion && ./node_modules/.bin/babel build/browserified.js > build/babeled.js && ./node_modules/.bin/uglifyjs --screw-ie8 build/babeled.js > build/raml2object.js"
   },
   "files": [
     "index.js",
