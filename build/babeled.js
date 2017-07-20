@@ -17,6 +17,268 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     s(r[o]);
   }return s;
 })({ 1: [function (require, module, exports) {
+    var raml2obj = require('./');
+    /* global self */
+    if (typeof window === 'undefined') {
+      // Web worker environment.
+      self.raml2obj = raml2obj;
+    } else {
+      window.raml2obj = raml2obj;
+    }
+  }, { "./": 2 }], 2: [function (require, module, exports) {
+    'use strict';
+
+    /**
+     * This library is meant to work in browser. It's hidden dependency is
+     * https://github.com/raml-org/raml-parser-toolbelt
+     * This library require to include it's browser/index.js script included into the document.
+     * Then the `datatype_expansion.js` global variable will be available which is used
+     * to extend RAML properties.
+     *
+     * Compering to original library it is also missing a raml js parser. In ARC this library
+     * is used alongside own RAML parser implementation.
+     *
+     * Use `npm run browser` to build the script in `./build` folder. Final library if the
+     * `raml2object.js`. It exposes `window.raml2object.parse` function to be used with parser output.
+     */
+
+    var _require = require('./lib/analyzer'),
+        PerformanceAnalyzer = _require.PerformanceAnalyzer;
+
+    var _require2 = require('./lib/enhencer'),
+        RamlJsonEnhancer = _require2.RamlJsonEnhancer;
+
+    var _require3 = require('./lib/arrays-objects'),
+        arraysToObjects = _require3.arraysToObjects;
+
+    var _require4 = require('./lib/expander'),
+        ExpansionLibrary = _require4.ExpansionLibrary;
+    /**
+     * Performs full RAML JavaScript object normalization.
+     *
+     * This task can be expaned to:
+     * - `prepareObject()`
+     * - `expandTypes()`
+     * - `normalize()`
+     *
+     * @param {[type]} source [description]
+     * @return {[type]} [description]
+     */
+
+
+    module.exports.parse = function (source) {
+      var r2o = new RamlJsonEnhancer();
+      return r2o.enhance(source);
+    };
+
+    /**
+     * Initial transformer before type expansion takes place.
+     * It normalizes objects structure.
+     *
+     * @param {Object} json RALM js parser json output.
+     * @param {?Object} opts Additional options:
+     * - `analyze` {Boolean} If set it will return stats from `analyzer`
+     * @return {Promise} Resolved promise to normalized Object that can be used to
+     * expand root types. Resolved object have `json` property with transformed
+     * object and depending on `opts` it may have `analyzer` property.
+     */
+    module.exports.prepareObject = function (json, opts) {
+      var result = {
+        json: []
+      };
+      if (opts.analyze) {
+        result.analyzer = [];
+      }
+      if (!json) {
+        return Promise.resolve(result);
+      }
+      var analyzer;
+      if (opts.analyze) {
+        analyzer = new PerformanceAnalyzer(true);
+        analyzer.mark('raml2obj-prepare-json-start');
+      }
+      arraysToObjects(json);
+      if (opts.analyze) {
+        analyzer = new PerformanceAnalyzer(true);
+        analyzer.mark('raml2obj-prepare-json-stop');
+      }
+      result.json = json;
+      if (opts.analyze) {
+        result.analyzer = analyzer.getMeasurements('raml2obj-prepare-json');
+      }
+      return Promise.resolve(result);
+    };
+
+    /**
+     * A function to be called to expand RAML types.
+     *
+     * @param {Array} types List of types to expand.
+     * @param {?Object} opts Additional options:
+     * - `analyze` {Boolean} If set it will return stats from `analyzer`
+     * @return {Promise} Resolved promise to an Object:
+     * - `types` {Array} expanded root types
+     * - `analyzer` {?Array} Optional, if `opts.analyze` is set, result of analyzer
+     */
+    module.exports.expandTypes = function (types, opts) {
+      var result = {
+        types: []
+      };
+      if (opts.analyze) {
+        result.analyzer = [];
+      }
+      if (!types || !types.length) {
+        return Promise.resolve(result);
+      }
+      var analyzer;
+      if (opts.analyze) {
+        analyzer = new PerformanceAnalyzer(true);
+        analyzer.mark('raml2obj-expanding-root-types-start');
+      }
+      return ExpansionLibrary.expandRootTypes(types).then(function (expanded) {
+        if (opts.analyze) {
+          analyzer.mark('raml2obj-expanding-root-types-end');
+          result.analyzer = analyzer.getMeasurements('raml2obj-expanding-root-types');
+        }
+        result.types = expanded;
+        return result;
+      });
+    };
+
+    /**
+     * Initial transformer before type expansion takes place.
+     * It normalizes objects structure.
+     *
+     * @param {Object} json RALM js parser json output.
+     * @param {?Array} types RAML (expanded) root types.
+     * @param {?Object} opts Additional options:
+     * - `analyze` {Boolean} If set it will return stats from `analyzer`
+     * @return {Promise} Resolved promise to an Object:
+     * - `json` {Object} Normalized RAML object
+     * - `analyzer` {?Array} Optional, if `opts.analyze` is set, result of analyzer
+     */
+    module.exports.normalize = function (json, types, opts) {
+      var result = {
+        json: []
+      };
+      if (opts.analyze) {
+        result.analyzer = [];
+      }
+      if (!json) {
+        return Promise.resolve(result);
+      }
+      var analyzer;
+      if (opts.analyze) {
+        analyzer = new PerformanceAnalyzer(true);
+        analyzer.mark('raml2obj-normalize-start');
+      }
+      var r2o = new RamlJsonEnhancer(opts);
+      json = r2o.normalize(json, types);
+      if (opts.analyze) {
+        analyzer.mark('raml2obj-normalize-stop');
+      }
+      result.json = json;
+      if (opts.analyze) {
+        result.analyzer = analyzer.getMeasurements('raml2obj-normalize-json');
+      }
+      return Promise.resolve(result);
+    };
+  }, { "./lib/analyzer": 3, "./lib/arrays-objects": 4, "./lib/enhencer": 6, "./lib/expander": 7 }], 3: [function (require, module, exports) {
+    'use strict';
+
+    /**
+     * Analyzer analyze performance of the script.
+     */
+
+    var PerformanceAnalyzer = function () {
+      function PerformanceAnalyzer(enabled) {
+        _classCallCheck(this, PerformanceAnalyzer);
+
+        this.hasSupport = enabled && this._hasSupport();
+      }
+
+      _createClass(PerformanceAnalyzer, [{
+        key: "_hasSupport",
+        value: function _hasSupport() {
+          return !!(typeof performance !== 'undefined' && performance.mark && performance.clearMeasures && performance.measure);
+        }
+        /**
+         * Uses the performance API to mark time of an event.
+         */
+
+      }, {
+        key: "mark",
+        value: function mark(title) {
+          if (!this.hasSupport) {
+            return;
+          }
+          performance.mark(title);
+        }
+
+        /**
+         * Returns a list of time measurements for given key.
+         *
+         * The `key` must have corresponding `key` + `start` and `key` + `end`
+         * markings in the performance timeline.
+         *
+         * @param {Array<String>} keys List of keys to return.
+         * @return {Array<Object>} List of measurements taken for the key.
+         */
+
+      }, {
+        key: "getMeasurements",
+        value: function getMeasurements(keys) {
+          if (!this.hasSupport) {
+            return [];
+          }
+          performance.clearMeasures();
+          keys.forEach(function (key) {
+            try {
+              performance.measure(key, key + '-start', key + '-end');
+            } catch (e) {}
+          });
+          var result = performance.getEntriesByType('measure');
+          return result.map(function (item) {
+            return {
+              name: item.name,
+              startTime: item.startTime,
+              duration: item.duration
+            };
+          });
+        }
+      }]);
+
+      return PerformanceAnalyzer;
+    }();
+
+    module.exports.PerformanceAnalyzer = PerformanceAnalyzer;
+  }, {}], 4: [function (require, module, exports) {
+    /**
+     * This code is from https://github.com/raml2html/raml2obj
+     */
+    /**
+    * @license
+    * The MIT License (MIT)
+    *
+    * Copyright (c) 2014 Kevin Renskers
+    *
+    * Permission is hereby granted, free of charge, to any person obtaining a copy
+    * of this software and associated documentation files (the "Software"), to deal
+    * in the Software without restriction, including without limitation the rights
+    * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    * copies of the Software, and to permit persons to whom the Software is
+    * furnished to do so, subject to the following conditions:
+    *
+    * The above copyright notice and this permission notice shall be included in all
+    * copies or substantial portions of the Software.
+    *
+    * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    * SOFTWARE.
+    */
     function _isObject(obj) {
       return obj === Object(obj);
     }
@@ -63,13 +325,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {});
     }
 
-    // PUBLIC
+    var recussiveArrayProperties = ['responses', 'body', 'queryParameters', 'headers', 'properties', 'baseUriParameters', 'annotations', 'uriParameters'];
+    var objectProperties = ['types', 'traits', 'resourceTypes', 'annotationTypes', 'securitySchemes'];
 
     function recursiveObjectToArray(obj) {
       if (_isObject(obj)) {
         Object.keys(obj).forEach(function (key) {
           var value = obj[key];
-          if (_isObject(obj) && ['responses', 'body', 'queryParameters', 'headers', 'properties', 'baseUriParameters', 'annotations', 'uriParameters'].indexOf(key) !== -1) {
+          if (_isObject(obj) && recussiveArrayProperties.indexOf(key) !== -1) {
             obj[key] = _objectToArray(value);
           }
 
@@ -86,8 +349,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
     // Transform some TOP LEVEL properties from arrays to simple objects
     function arraysToObjects(ramlObj) {
-      ['types', 'traits', 'resourceTypes', 'annotationTypes', 'securitySchemes'].forEach(function (key) {
-        if (ramlObj[key]) {
+      objectProperties.forEach(function (key) {
+        if (key in ramlObj && ramlObj[key]) {
           ramlObj[key] = _arrayToObject(ramlObj[key]);
         }
       });
@@ -98,241 +361,565 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       arraysToObjects: arraysToObjects,
       recursiveObjectToArray: recursiveObjectToArray
     };
-  }, {}], 2: [function (require, module, exports) {
-    var raml2obj = require('./');
-    /* global self */
-    if (typeof window === 'undefined') {
-      // Web worker environment.
-      self.raml2obj = raml2obj;
-    } else {
-      window.raml2obj = raml2obj;
-    }
-  }, { "./": 4 }], 3: [function (require, module, exports) {
-    function _isObject(obj) {
-      return obj === Object(obj);
-    }
-
-    function makeConsistent(obj, types) {
-      if (Array.isArray(obj)) {
-        obj.forEach(function (value) {
-          makeConsistent(value, types);
-        });
-      } else if (_isObject(obj)) {
-        if (obj.type) {
-          if (Array.isArray(obj.type)) {
-            obj.type = obj.type[0];
-          }
-
-          if (types && types[obj.type]) {
-            var typedef = types[obj.type];
-            var objectExamples = [];
-            if (obj.examples && typedef.examples) {
-              objectExamples = obj.examples;
-            }
-            if (obj.example && typedef.example) {
-              objectExamples.push(obj.example);
-            }
-            var objectProperties = obj.properties;
-            var objectItems = obj.items;
-            var objectDefault = obj.default;
-            // let objectDisplayName = obj.displayName; // Don't do this or body will have ugly name.
-            var objectDescription = obj.description;
-            var objectEnum = obj.enum;
-            // First remember current value of the object properties
-            // and then override type's value.
-            Object.assign(obj, types[obj.type]);
-            obj.__typeConsistent = true;
-            if (objectExamples.length) {
-              if (!obj.examples || !obj.examples.length) {
-                obj.examples = [];
-              }
-              objectExamples.forEach(function (item) {
-                obj.examples.push(item);
-              });
-            }
-            if (objectProperties) {
-              Object.assign(obj.properties, objectProperties);
-            }
-            if (objectItems) {
-              Object.assign(obj.items, objectItems);
-            }
-            if (objectDefault) {
-              obj.default = objectDefault;
-            }
-            // if (objectDisplayName) {
-            //   obj.displayName = objectDisplayName;
-            // }
-            if (objectDescription) {
-              obj.description = objectDescription;
-            }
-            if (objectEnum) {
-              obj.enum = objectEnum;
-            }
-          }
-        }
-
-        if (obj.items && types && types[obj.items]) {
-          obj.items = types[obj.items];
-        }
-
-        if (obj.examples && obj.examples.length) {
-          obj.examples = obj.examples.map(function (example) {
-            return example.value ? example.value : example;
-          });
-        }
-
-        if (obj.structuredExample) {
-          if (typeof obj.examples === 'undefined') {
-            obj.examples = [];
-          }
-
-          obj.examples.push(obj.structuredExample.value);
-          delete obj.example;
-          delete obj.structuredExample;
-        }
-
-        var keys = Object.keys(obj);
-        keys.forEach(function (key) {
-          if (obj.__typeConsistent && ['properties', 'items'].indexOf(key) !== -1) {
-            return;
-          }
-          makeConsistent(obj[key], types);
-        });
-      }
-
-      return obj;
-    }
-
-    module.exports = makeConsistent;
-  }, {}], 4: [function (require, module, exports) {
+  }, {}], 5: [function (require, module, exports) {
     'use strict';
 
     /**
-     * This library is meant to work in browser. It's hidden dependency is
-     * https://github.com/raml-org/raml-parser-toolbelt
-     * This library require to include it's browser/index.js script included into the document.
-     * Then the `datatype_expansion.js` global variable will be available which is used
-     * to extend RAML properties.
-     *
-     * Compering to original library it is also missing a raml js parser. In ARC this library
-     * is used alongside own RAML parser implementation.
-     *
-     * Use `npm run browser` to build the script in `./build` folder. Final library if the
-     * `raml2object.js`. It exposes `window.raml2object.parse` function to be used with parser output.
+     * This code is from https://github.com/raml2html/raml2obj
      */
-    /* global datatype_expansion */
 
-    var makeConsistent = require('./consistency-helpers');
+    /**
+     * @license
+     * The MIT License (MIT)
+     *
+     * Copyright (c) 2014 Kevin Renskers
+     *
+     * Permission is hereby granted, free of charge, to any person obtaining a copy
+     * of this software and associated documentation files (the "Software"), to deal
+     * in the Software without restriction, including without limitation the rights
+     * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+     * copies of the Software, and to permit persons to whom the Software is
+     * furnished to do so, subject to the following conditions:
+     *
+     * The above copyright notice and this permission notice shall be included in all
+     * copies or substantial portions of the Software.
+     *
+     * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+     * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+     * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+     * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+     * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+     * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+     * SOFTWARE.
+     */
 
-    var _require = require('./arrays-objects-helpers'),
-        arraysToObjects = _require.arraysToObjects,
-        recursiveObjectToArray = _require.recursiveObjectToArray;
+    /**
+    * Uses Mulesoft's expansion library for RAML types.
+    */
 
-    var Raml2Object = function () {
-      function Raml2Object(object) {
-        _classCallCheck(this, Raml2Object);
-
-        this.raml = object;
-        // If set to true it will use the performance API to measure the time of work.
-        // Call `getMeasurement()` to get the list of results.
-        this.debug = false;
+    var ConsistencyHelper = function () {
+      function ConsistencyHelper() {
+        _classCallCheck(this, ConsistencyHelper);
       }
+
+      _createClass(ConsistencyHelper, null, [{
+        key: "isObject",
+
+        /**
+         * Checks if the object is type of object.
+         *
+         * @param {ANY} obj Object to test
+         * @return {Boolean} True if the `obj` is type of Object class.
+         */
+        value: function isObject(obj) {
+          return obj && obj === Object(obj) && !Array.isArray(obj);
+        }
+      }, {
+        key: "makeConsistent",
+        value: function makeConsistent(obj, types) {
+          debugger;
+          if (!obj || obj.__typeConsistent) {
+            return obj;
+          }
+
+          if (Array.isArray(obj)) {
+            obj.forEach(function (value, i) {
+              obj[i] = ConsistencyHelper.makeConsistent(value, types);
+            });
+          } else if (ConsistencyHelper.isObject(obj)) {
+            if (obj.type) {
+              obj = ConsistencyHelper.consistentType(obj, types);
+            }
+
+            if (obj.items && types && types[obj.items]) {
+              obj.items = types[obj.items];
+            }
+
+            obj = ConsistencyHelper.consistentExample(obj);
+
+            var keys = Object.keys(obj);
+            keys.forEach(function (key) {
+              // if (obj.__typeConsistent && ['properties', 'items'].indexOf(key) !== -1) {
+              //   return;
+              // }
+              obj[key] = ConsistencyHelper.makeConsistent(obj[key], types);
+            });
+          }
+          return obj;
+        }
+
+        /**
+         * Makes type declaration of a property consistant.
+         *
+         * @param {Object} obj Currently transformed object. Probably a type
+         * declaration as a `property` or `item`.
+         * @param {?Array} types List of available types.
+         * @return {Object} Transformed object.
+         */
+
+      }, {
+        key: "consistentType",
+        value: function consistentType(obj, types) {
+          if (Array.isArray(obj.type)) {
+            obj.type = obj.type[0];
+          }
+          if (types && types[obj.type]) {
+            ConsistencyHelper.applyType(obj, types[obj.type]);
+          }
+
+          return obj;
+        }
+        /**
+         * Makes examples consistent by creating an array of examples with string
+         * example value.
+         *
+         * @param {Object} obj Currently transformed object. Probably a type
+         * declaration as a `property` or `item`.
+         * @return {Object} Transformed object.
+         */
+
+      }, {
+        key: "consistentExample",
+        value: function consistentExample(obj) {
+          if (obj.examples && obj.examples.length) {
+            obj.examples = obj.examples.map(function (example) {
+              return example.value ? example.value : example;
+            });
+          }
+
+          if (obj.structuredExample) {
+            if (typeof obj.examples === 'undefined') {
+              obj.examples = [];
+            }
+            obj.examples.push(obj.structuredExample.value);
+            delete obj.example;
+            delete obj.structuredExample;
+          }
+          return obj;
+        }
+
+        /**
+         * Applies type definition to current property.
+         * This adds properties from a type declaration to current object respecting
+         * object's existing properties.
+         *
+         * For example `properties`, `items` from `obj` and `typedef` will be
+         * merged and inline properties overrides types properties.
+         *
+         * Examples are merged into one array.
+         *
+         * `obj`'s inline defined properties (description, enum, default) are preserved.
+         *
+         * @param {Object} obj Currently transformed object. Must be type
+         * declaration as a `property` or `item`.
+         * @param {Object} typedef Type definition to apply to the object.
+         * @return {Object} Transformed object.
+         */
+
+      }, {
+        key: "applyType",
+        value: function applyType(obj, typedef) {
+
+          var overrideProperties = {
+            description: obj.description,
+            enum: obj.enum,
+            default: obj.default,
+            schema: obj.schema,
+            xml: obj.xml
+          };
+
+          var mergeProperties = {
+            properties: obj.properties,
+            items: obj.items
+          };
+
+          // Examples should be merged instead of being overriden.
+          var examples = [];
+          if (obj.examples) {
+            examples = obj.examples;
+            delete obj.examples;
+          }
+          if (obj.example) {
+            examples.push(obj.example);
+            delete obj.example;
+          }
+
+          obj = Object.assign(obj, typedef);
+
+          if (obj.type && Array.isArray(obj.type)) {
+            obj.type = obj.type[0];
+          }
+
+          if (!obj.examples) {
+            obj.examples = [];
+          }
+
+          if (examples.length) {
+            obj.examples = obj.examples.merge(examples);
+          }
+
+          Object.keys(mergeProperties).forEach(function (key) {
+            if (mergeProperties[key] === undefined) {
+              return;
+            }
+            var _temp = Object.assign({}, obj[key]);
+            Object.assign(_temp, mergeProperties[key]);
+            obj[key] = _temp;
+          });
+
+          Object.keys(overrideProperties).forEach(function (key) {
+            if (overrideProperties[key] === undefined) {
+              return;
+            }
+            obj[key] = overrideProperties[key];
+          });
+          // A flag to not process this object again in case of recursive types.
+          obj.__typeConsistent = true;
+        }
+      }]);
+
+      return ConsistencyHelper;
+    }();
+
+    module.exports.ConsistencyHelper = ConsistencyHelper;
+  }, {}], 6: [function (require, module, exports) {
+    'use strict';
+
+    var _require5 = require('./arrays-objects'),
+        arraysToObjects = _require5.arraysToObjects,
+        recursiveObjectToArray = _require5.recursiveObjectToArray;
+
+    var _require6 = require('./analyzer'),
+        PerformanceAnalyzer = _require6.PerformanceAnalyzer;
+
+    var _require7 = require('./expander'),
+        ExpansionLibrary = _require7.ExpansionLibrary;
+
+    var _require8 = require('./consistency-helpers'),
+        ConsistencyHelper = _require8.ConsistencyHelper;
+
+    var _require9 = require('./security-schemes'),
+        SecuritySchemesTransformer = _require9.SecuritySchemesTransformer;
+    /**
+     * The RAML JSON enhancer library for node.
+     *
+     * This library is inspired by the raml2object library
+     * (https://github.com/raml2html/raml2obj) and uses some of it's code.
+     * However it was adjusted to work with Advanced REST Client elements
+     * to create the API console (by Mulesoft).
+     *
+     * Use this library to "enhance" JSON output of the raml-js-parser-2
+     * that can be used with the API console or any other RAML related ARC element.
+     */
+
+
+    var RamlJsonEnhancer = function () {
+      function RamlJsonEnhancer(opts) {
+        _classCallCheck(this, RamlJsonEnhancer);
+
+        opts = opts || {};
+        this.analyzer = new PerformanceAnalyzer(opts.analyze);
+      }
+
       /**
-       * Uses the performance API to mark time for an event.
+       * Enchances RAML's JSON parser output by normalizing data type structure and
+       * by expanding types definition useing the datatype_expansion library.
+       *
+       * @param {Object} raml The JSON output from the raml-js-parser-2
+       * @return {Promise} Fulfilled object with enhanced JSON structure.
        */
 
 
-      _createClass(Raml2Object, [{
-        key: "mark",
-        value: function mark(title) {
-          if (this.debug && performance && performance.mark) {
-            performance.mark(title);
-          }
-        }
-        /**
-         * Computes times of execution of specific parts of the library.
-         *
-         * Entries names:
-         * - raml2obj-enhace - time to execture the entire enhacement process
-         * - raml2obj-arrays-to-object
-         * - raml2obj-expanding-root-types
-         * - raml2obj-make-consistent-root-types
-         * - raml2obj-make-consistent-raml
-         * - raml2obj-recursive-object-to-array
-         * - raml2obj-apply-raml-types
-         *
-         * @return {Array<PerformanceEntry>} A list of entries. If the `debug` flag is not set to true
-         * the it will return empty list.
-         */
-
-      }, {
-        key: "getMeasurement",
-        value: function getMeasurement() {
-          if (!this.debug) {
-            return [];
-          }
-          try {
-            performance.measure('raml2obj-enhace', 'raml2obj-enhace-start', 'raml2obj-enhace-end');
-            performance.measure('raml2obj-arrays-to-object', 'raml2obj-arrays-to-object-start', 'raml2obj-arrays-to-object-end');
-            performance.measure('raml2obj-expanding-root-types', 'raml2obj-expanding-root-types-start', 'raml2obj-expanding-root-types-end');
-            performance.measure('raml2obj-make-consistent-root-types', 'raml2obj-make-consistent-root-types-start', 'raml2obj-make-consistent-root-types-end');
-            performance.measure('raml2obj-make-consistent-raml', 'raml2obj-make-consistent-raml-start', 'raml2obj-make-consistent-raml-end');
-            performance.measure('raml2obj-recursive-object-to-array', 'raml2obj-recursive-object-to-array-start', 'raml2obj-recursive-object-to-array-end');
-            performance.measure('raml2obj-apply-raml-types', 'raml2obj-apply-raml-types-start', 'raml2obj-apply-raml-types-end');
-          } catch (e) {
-            return [];
-          }
-          return performance.getEntriesByType('measure');
-        }
-
-        /**
-         * Enchances RAML's JSON parser output by normalizing data type structure and
-         * by expanding types definition useing the datatype_expansion library.
-         *
-         * @return {Promise} Fulfilled object with enhanced RAML JSON structure.
-         */
-
-      }, {
+      _createClass(RamlJsonEnhancer, [{
         key: "enhance",
-        value: function enhance() {
+        value: function enhance(raml) {
           var _this = this;
 
-          this.mark('raml2obj-enhace-start');
-          this.mark('raml2obj-arrays-to-object-start');
-          arraysToObjects(this.raml);
-          this.mark('raml2obj-arrays-to-object-end');
-          this.mark('raml2obj-expanding-root-types-start');
-          return this.expandRootTypes(this.raml.types).then(function (expanded) {
-            _this.mark('raml2obj-expanding-root-types-end');
-            _this.mark('raml2obj-make-consistent-root-types-start');
-            var types = makeConsistent(expanded);
-            _this.mark('raml2obj-make-consistent-root-types-end');
-            delete _this.raml.types;
-            _this.mark('raml2obj-make-consistent-raml-start');
-            makeConsistent(_this.raml, types);
-            _this.mark('raml2obj-make-consistent-raml-end');
-            _this.mark('raml2obj-recursive-object-to-array-start');
-            recursiveObjectToArray(_this.raml);
-            _this.mark('raml2obj-recursive-object-to-array-end');
-            _this.securitySchemes = _this.raml.securitySchemes;
-            _this.mark('raml2obj-apply-raml-types-start');
-            _this.applyRamlTypes(_this.raml);
-            _this.mark('raml2obj-apply-raml-types-end');
-            if (types) {
-              _this.raml.types = types;
-            }
-            _this.mark('raml2obj-enhace-end');
-            return _this.raml;
+          arraysToObjects(raml);
+          return ExpansionLibrary.expandRootTypes(raml.types).then(function (expanded) {
+            return _this.normalize(raml, expanded);
           });
+        }
+        /**
+         * Normalizes RAML JavaScript object applying expanded root types and
+         * by normalizing properties values of the object.
+         *
+         * @param {Object} raml An object to normalize. Output of the RAML javascript
+         * parser
+         * @param {Array} types List of (expanded) RAML types as JavaScript object
+         * @return {Object} Normalized RAML object.
+         */
+
+      }, {
+        key: "normalize",
+        value: function normalize(raml, types) {
+          delete raml.types;
+          this._makeRamlConsistent(raml, types);
+          this._transformObjectsToArrays(raml);
+          this._normalizeObject(raml);
+          if (types) {
+            raml.types = types;
+          }
+          return raml;
+        }
+      }, {
+        key: "_makeRamlConsistent",
+        value: function _makeRamlConsistent(raml, types) {
+          this.analyzer.mark('raml-enhancer-make-raml-consistent-start');
+          ConsistencyHelper.makeConsistent(raml, types);
+          this.analyzer.mark('raml-enhancer-make-raml-consistent-end');
+        }
+      }, {
+        key: "_transformObjectsToArrays",
+        value: function _transformObjectsToArrays(raml) {
+          this.analyzer.mark('raml-enhancer-make-raml-consistent-start');
+          recursiveObjectToArray(raml);
+          this.analyzer.mark('raml-enhancer-make-raml-consistent-end');
+        }
+      }, {
+        key: "_normalizeObject",
+        value: function _normalizeObject(raml) {
+          this.analyzer.mark('raml-enhancer-recursive-normalization-start');
+          var rootTypes = {
+            securitySchemes: raml.securitySchemes
+          };
+          this.enhaceJson(raml, rootTypes);
+          this.analyzer.mark('raml-enhancer-recursive-normalization-end');
+        }
+        /**
+         * Recursevily adds the URI parameters to methods and resources.
+         * It also applies security schemas definitions on a resource and method level.
+         *
+         * Affected properties:
+         * - resource/parentUrl - a full URL of the parent resource
+         * - resource/allUriParameters - list of all URI parameters that apply to this
+         * resource (computed from the root down to current resource)
+         * - resource/securedBy - Replaces security schema name with schema's
+         * definition.
+         * - method/allUriParameters - The same as for a resource but applied to a
+         * method that is direct child of the resource.
+         * - method/absoluteUri - Full, absolute URL to the method containg URI
+         * parametes in their RAML's form, eg `/{fileId}`
+         * - method/securedBy - The same as for the resource
+         */
+
+      }, {
+        key: "enhaceJson",
+        value: function enhaceJson(ramlObj, rootTypes, parentUrl, allUriParameters) {
+          var _this2 = this;
+
+          if (!ramlObj.resources) {
+            return;
+          }
+
+          ramlObj.resources.forEach(function (resource) {
+            resource.parentUrl = parentUrl || '';
+            resource.allUriParameters = ramlObj.baseUriParameters || [];
+
+            if (allUriParameters) {
+              resource.allUriParameters = resource.allUriParameters.concat(allUriParameters);
+            }
+
+            if (resource.uriParameters) {
+              resource.allUriParameters = resource.allUriParameters.concat(resource.uriParameters);
+            }
+
+            // Copy the RESOURCE uri parameters to the METHOD, because that's where they will be rendered.
+            if (resource.methods) {
+              resource.methods.forEach(function (method) {
+                method.allUriParameters = resource.allUriParameters;
+                method.absoluteUri = resource.absoluteUri;
+                SecuritySchemesTransformer.addSecuritSchemes(method, rootTypes.securitySchemes);
+              });
+            }
+            SecuritySchemesTransformer.addSecuritSchemes(resource, rootTypes.securitySchemes);
+            var fullUrl = resource.parentUrl + resource.relativeUri;
+            _this2.enhaceJson(resource, rootTypes, fullUrl, resource.allUriParameters);
+          });
+        }
+      }]);
+
+      return RamlJsonEnhancer;
+    }();
+
+    module.exports.RamlJsonEnhancer = RamlJsonEnhancer;
+  }, { "./analyzer": 3, "./arrays-objects": 4, "./consistency-helpers": 5, "./expander": 7, "./security-schemes": 8 }], 7: [function (require, module, exports) {
+    'use strict';
+
+    var _require10 = require('./consistency-helpers'),
+        ConsistencyHelper = _require10.ConsistencyHelper;
+
+    var isNode = false;
+    if (typeof module !== 'undefined' && module.exports) {
+      isNode = true;
+    }
+
+    /* global datatype_expansion */
+
+    /**
+     * Uses Mulesoft's expansion library for RAML types.
+     */
+
+    var ExpansionLibrary = function () {
+      function ExpansionLibrary() {
+        _classCallCheck(this, ExpansionLibrary);
+      }
+
+      _createClass(ExpansionLibrary, null, [{
+        key: "expandRootTypes",
+
+
+        /**
+         * The RAML expanded form for a RAML type, resolves references and fills
+         * missing information to compute a fully expanded representation of the type.
+         *
+         * The canonical form computes inheritance and pushes unions to the top
+         * level of the type structure of an expanded RAML type.
+         *
+         * More info:
+         * https://github.com/raml-org/raml-parser-toolbelt/tree/master/tools/datatype-expansion
+         *
+         * @param {Object} types A map of RAML types
+         * @return {Promise} Resolved to expanded canonical form of RAML types.
+         */
+        value: function expandRootTypes(types) {
+          if (!types) {
+            console.warn('expandRootTypes::noting to expand');
+            return Promise.resolve(types);
+          }
+          var keys = Object.keys(types);
+          if (!keys.length) {
+            console.warn('expandRootTypes::types are empty');
+            return Promise.resolve(types);
+          }
+          var promises = keys.map(function (key) {
+            return ExpansionLibrary._expandType(types, key);
+          });
+          return Promise.all(promises).then(function (results) {
+            results.forEach(function (result) {
+              types[result[0]] = result[1];
+            });
+            return types;
+          }).then(function (result) {
+            console.warn('expandRootTypes::types');
+            console.log(result);
+            return ConsistencyHelper.makeConsistent(result);
+          });
+        }
+        /**
+         * Expands a single type.
+         *
+         * @param {Object} types A map of RAML types
+         * @param {String} key A key of currently processed type.
+         * @return {Promise} Resolved to expanded canonical form of the type.
+         */
+
+      }, {
+        key: "_expandType",
+        value: function _expandType(types, key) {
+          return new Promise(function (resolve) {
+            // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
+            var library = isNode ? require('datatype-expansion') : datatype_expansion.js;
+            library.expandedForm(types[key], types, function (err, expanded) {
+              if (err) {
+                console.error(err);
+              }
+              if (expanded) {
+                library.canonicalForm(expanded, function (err2, canonical) {
+                  if (err2) {
+                    console.error(err2);
+                  }
+                  if (canonical) {
+                    resolve([key, canonical]);
+                  } else {
+                    console.log('No canonical form for ' + key);
+                    resolve([key, types[key]]);
+                  }
+                });
+              } else {
+                resolve([key, types[key]]);
+              }
+            });
+            // jscs:enable requireCamelCaseOrUpperCaseIdentifiers
+          });
+        }
+      }]);
+
+      return ExpansionLibrary;
+    }();
+
+    module.exports.ExpansionLibrary = ExpansionLibrary;
+  }, { "./consistency-helpers": 5, "datatype-expansion": 9 }], 8: [function (require, module, exports) {
+    'use strict';
+
+    /**
+     * Transforms security schemes of RAML object.
+     */
+
+    var SecuritySchemesTransformer = function () {
+      function SecuritySchemesTransformer() {
+        _classCallCheck(this, SecuritySchemesTransformer);
+      }
+
+      _createClass(SecuritySchemesTransformer, null, [{
+        key: "isObject",
+
+        // Checks if given `obj` is an Object.
+        value: function isObject(obj) {
+          return obj && obj === Object(obj) && !Array.isArray(obj);
+        }
+        /**
+         * Detects and adds security scheme definitions to the object.
+         *
+         * It replaces the id of the security scheme on a resource / method level with
+         * Security Scheme type definition.
+         *
+         * @param {Object} object An object where security schemes should be applied.
+         * Either RAML method or resource
+         * @param {Object} rootSchemes Defined on a root level list of security
+         * schemes.
+         */
+
+      }, {
+        key: "addSecuritSchemes",
+        value: function addSecuritSchemes(object, rootSchemes) {
+          if (!rootSchemes || !Object.keys(rootSchemes).length) {
+            return;
+          }
+          if (!object || !object.securedBy || !object.securedBy.length) {
+            return;
+          }
+          var added = false;
+          object.securedBy.forEach(function (item, i) {
+            if (typeof item === 'string') {
+              if (item in rootSchemes) {
+                added = true;
+                object.securedBy[i] = Object.assign({}, rootSchemes[item]);
+              }
+            } else if (SecuritySchemesTransformer.isObject(item)) {
+              var keys = Object.keys(item);
+              var key = keys[0];
+              if (key in rootSchemes) {
+                added = true;
+                var schema = Object.assign({}, rootSchemes[key]);
+                var params = item[key];
+                schema.settings = Object.assign({}, schema.settings, params);
+                object.securedBy[i] = schema;
+              }
+            }
+          });
+          if (added) {
+            SecuritySchemesTransformer.transform(object);
+          }
         }
 
         /**
          * Applies security schemas properties to the resources and methods.
-         * If the security scheme has a `describedBy` field the corresponding fields
+         * If the security scheme has the `describedBy` field then corresponding fields
          * will be updated.
          *
          * This function should be called once per object since it won't check
-         * if the properties from the security schema was already applied.
+         * if the properties from the security scheme was already applied.
          *
          * This function returns nothing. Changes are made deep inside the object
          * so it is resolved by referewnce.
@@ -341,8 +928,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
          */
 
       }, {
-        key: "applySecuritySchemes",
-        value: function applySecuritySchemes(object) {
+        key: "transform",
+        value: function transform(object) {
           if (!object.queryParameters) {
             object.queryParameters = [];
           }
@@ -385,156 +972,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           });
           object.responses = responses;
         }
-
-        // Checks if given `obj` is an Object.
-
-      }, {
-        key: "isObject",
-        value: function isObject(obj) {
-          return obj === Object(obj);
-        }
-
-        /**
-         * Detect and add security scheme definitions to the object.
-         * It replaces the id of the security scheme on a resource / method level with
-         * Security Scheme type definition.
-         *
-         * @param {Object} object An object where security schemes should be applied. Either RAML method
-         * or resource
-         * @param {Object} rootSchemes Defined on a root level security schemes.
-         */
-
-      }, {
-        key: "addSecuritSchemes",
-        value: function addSecuritSchemes(object) {
-          var _this2 = this;
-
-          var rootSchemes = this.securitySchemes;
-          if (!rootSchemes || !Object.keys(rootSchemes).length) {
-            return;
-          }
-
-          if (!object || !object.securedBy || !object.securedBy.length) {
-            return;
-          }
-
-          var added = false;
-          object.securedBy.forEach(function (item, i) {
-            if (typeof item === 'string') {
-              if (item in rootSchemes) {
-                added = true;
-                object.securedBy[i] = Object.assign({}, rootSchemes[item]);
-              }
-            } else if (_this2.isObject(item)) {
-              var keys = Object.keys(item);
-              var key = keys[0];
-              if (key in rootSchemes) {
-                added = true;
-                var schema = Object.assign({}, rootSchemes[key]);
-                var params = item[key];
-                schema.settings = Object.assign({}, schema.settings, params);
-                object.securedBy[i] = schema;
-              }
-            }
-          });
-          if (added) {
-            this.applySecuritySchemes(object);
-          }
-        }
-
-        /**
-         * Adds URI parameters to methods and resources to the lowest level in the resource hierarchy.
-         * Also applies security schemas definitions on a resource and method level.
-         */
-
-      }, {
-        key: "applyRamlTypes",
-        value: function applyRamlTypes(ramlObj, parentUrl, allUriParameters) {
-          var _this3 = this;
-
-          if (!ramlObj.resources) {
-            return;
-          }
-
-          ramlObj.resources.forEach(function (resource) {
-            resource.parentUrl = parentUrl || '';
-            resource.allUriParameters = ramlObj.baseUriParameters || [];
-
-            if (allUriParameters) {
-              resource.allUriParameters = resource.allUriParameters.concat(allUriParameters);
-            }
-
-            if (resource.uriParameters) {
-              resource.allUriParameters = resource.allUriParameters.concat(resource.uriParameters);
-            }
-
-            // Copy the RESOURCE uri parameters to the METHOD, because that's where they will be rendered.
-            if (resource.methods) {
-              resource.methods.forEach(function (method) {
-                method.allUriParameters = resource.allUriParameters;
-                method.absoluteUri = resource.absoluteUri;
-                _this3.addSecuritSchemes(method);
-              });
-            }
-            _this3.addSecuritSchemes(resource);
-
-            _this3.applyRamlTypes(resource, resource.parentUrl + resource.relativeUri, resource.allUriParameters);
-          });
-        }
-
-        // This uses the datatype-expansion library to expand all the root type to their canonical
-        // expanded form
-
-      }, {
-        key: "expandRootTypes",
-        value: function expandRootTypes(types) {
-          var _this4 = this;
-
-          if (!types) {
-            return Promise.resolve(types);
-          }
-          var promises = Object.keys(types).map(function (key) {
-            return _this4._expandType(types, key);
-          });
-          return Promise.all(promises).then(function (results) {
-            results.forEach(function (result) {
-              types[result[0]] = result[1];
-            });
-            return types;
-          });
-        }
-      }, {
-        key: "_expandType",
-        value: function _expandType(types, key) {
-          return new Promise(function (resolve) {
-            // var datatype_expansion = {
-            //   js: require('datatype-expansion')
-            // };
-            // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-            datatype_expansion.js.expandedForm(types[key], types, function (err, expanded) {
-              if (expanded) {
-                datatype_expansion.js.canonicalForm(expanded, function (err2, canonical) {
-                  if (canonical) {
-                    resolve([key, canonical]);
-                  } else {
-                    resolve([key, types[key]]);
-                  }
-                });
-              } else {
-                resolve([key, types[key]]);
-              }
-            });
-            // jscs:enable requireCamelCaseOrUpperCaseIdentifiers
-          });
-        }
       }]);
 
-      return Raml2Object;
+      return SecuritySchemesTransformer;
     }();
 
-    module.exports.parse = function (source) {
-      var r2o = new Raml2Object(source);
-      return r2o.enhance();
-    };
-  }, { "./arrays-objects-helpers": 1, "./consistency-helpers": 3 }] }, {}, [2]);
+    module.exports.SecuritySchemesTransformer = SecuritySchemesTransformer;
+  }, {}], 9: [function (require, module, exports) {}, {}] }, {}, [1]);
 
