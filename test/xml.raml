@@ -50,6 +50,10 @@ types:
   get:
     responses:
       200:
+        headers:
+          Content-Type:
+            type: string
+            default: application/json
         body:
           application/xml:
             type: Person
