@@ -1,43 +1,65 @@
-# RAML to object
+# RAML to object (ARC version)
 
-[![NPM version](http://img.shields.io/npm/v/raml2obj.svg)](https://www.npmjs.org/package/raml2obj)
-[![js-standard-style](https://img.shields.io/badge/code%20style-airbnb-blue.svg?style=flat)](https://github.com/airbnb/javascript)
+This is a fork of [raml2obj](https://github.com/raml2html/raml2obj) library that
+has been altered to serve Mulesoft's API console and Advanced REST Client
+components.
 
-A thin wrapper around [raml-js-parser-2](https://github.com/raml-org/raml-js-parser-2), adding extra properties to the resulting
-object for use in [raml2html](https://www.npmjs.org/package/raml2html) and [raml2md](https://www.npmjs.org/package/raml2md).
+There's a lot of differences between the libraries in the API.
 
-Versions 4.0.0 and up only support RAML 1.x files. If you still have RAML 0.8 source files, please stick with raml2obj 3. 
+* No RAML parser, this library expects a YAML input as a string
+* this library have different approach to applying types definitions to properties / items. It doesn't override some fields if the property if they were defined inline.
+* It's build for browser. Expansion library is an optional dependency for node. In browser environment you have to include build of the expansion library by your own.
+* exposes more functions than the original library
+
+This library is used by
+
+- [raml-json-enhance](https://github.com/advanced-rest-client/raml-json-enhance)
+- [raml-json-enhance-node](https://github.com/mulesoft-labs/raml-json-enhance-node)
 
 ## Install
+
 ```
-npm i raml2obj --save
+$ npm i advanced-rest-client/raml2obj --save
 ```
 
+## Usage (node)
 
-## Usage
 ```js
-var raml2obj = require('raml2obj');
+const parser = require('raml-1-parser');
+const raml2obj = require('raml2obj');
 
-// source can either be a filename, url, or parsed RAML object.
-// Returns a promise.
-raml2obj.parse(source).then(function(ramlObj) {
-  // Do something with the resulting ramlObj :)
-});
+parser.loadApi('./api.raml', {
+  rejectOnErrors: false
+})
+.then(result => {
+  return result.expand(true)
+    .toJSON({
+      serializeMetadata: false
+    });
+})
+.then(json => raml2obj.parse(json))
+.then(ramlObj => console.log(raml));
 ```
 
+## Building browser version
 
-## Contribute
-raml2obj is an open source project and your contribution is very much appreciated.
+Don't forget to pass `--ignore datatype-expansion` to [browserify](http://browserify.org/)
+command to not include the node version of the expansion library.
+In browser include browser version of the datatype-expansion library or
+concatenate browser build with this output.
 
-1. Check for open issues or open a fresh issue to start a discussion around a feature idea or a bug.
-2. Fork the repository on Github and make your changes on the **develop** branch (or branch off of it).  
-   Please retain the [code style](https://github.com/airbnb/javascript) that is used in the project and `npm run lint` before committing.
-3. Add unit tests, run them with `npm run test`
-4. Send a pull request (with the develop branch as the target).
+### Example build
 
-A big thank you goes out to everyone who helped with the project, the [contributors](https://github.com/raml2html/raml2obj/graphs/contributors)
-and everyone who took the time to report issues and give feedback.
+```
+$ browserify browser.js -o build/browserified.js --ignore datatype-expansion && babel build/browserified.js > build/babeled.js && uglifyjs --screw-ie8 build/babeled.js > build/raml2object.js
+```
+
+The `build/raml2object.js` is the one you'd like to include in the browser.
+You can also concatenate it with [expansion library build](https://github.com/advanced-rest-client/raml-json-enhance/blob/stage/browser/index.js)
+(259 KB) or other library that creates a canonical version of a type.
 
 
 ## License
-raml2obj is available under the MIT license. See the LICENSE file for more info.
+[raml2obj](https://github.com/raml2html/raml2obj) is available under the MIT license. See the LICENSE file for more info.
+
+ARC components are distributed under Apache 2 (open source or non-profit) or CC-BY license (others).
