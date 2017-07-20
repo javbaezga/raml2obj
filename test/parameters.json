@@ -41,10 +41,10 @@
                   "type": "string",
                   "required": true,
                   "description": "name on account",
+                  "key": "name",
                   "examples": [
                     "Naruto Uzumaki"
-                  ],
-                  "key": "name"
+                  ]
                 },
                 {
                   "name": "gender",
@@ -90,10 +90,10 @@
                   "type": "string",
                   "required": true,
                   "description": "Basic authentication header",
+                  "key": "Authorization",
                   "examples": [
                     "Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==\n"
-                  ],
-                  "key": "Authorization"
+                  ]
                 }
               ],
               "method": "get",

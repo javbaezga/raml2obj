@@ -8,16 +8,16 @@
           "method": "get",
           "allUriParameters": [
             {
-              "name": "objectid",
+              "name": "id",
               "displayName": "objectid",
               "type": "string",
               "required": true,
+              "key": "id",
               "description": "A valid MongoDB object id.",
               "examples": [
                 "576bca8b70fddb149c4a9e92"
               ],
-              "__typeConsistent": true,
-              "key": "id"
+              "__typeConsistent": true
             }
           ],
           "absoluteUri": "/company"
@@ -25,16 +25,16 @@
       ],
       "uriParameters": [
         {
-          "name": "objectid",
+          "name": "id",
           "displayName": "objectid",
           "type": "string",
           "required": true,
+          "key": "id",
           "description": "A valid MongoDB object id.",
           "examples": [
             "576bca8b70fddb149c4a9e92"
           ],
-          "__typeConsistent": true,
-          "key": "id"
+          "__typeConsistent": true
         }
       ],
       "relativeUri": "/company",
@@ -46,16 +46,16 @@
       "parentUrl": "",
       "allUriParameters": [
         {
-          "name": "objectid",
+          "name": "id",
           "displayName": "objectid",
           "type": "string",
           "required": true,
+          "key": "id",
           "description": "A valid MongoDB object id.",
           "examples": [
             "576bca8b70fddb149c4a9e92"
           ],
-          "__typeConsistent": true,
-          "key": "id"
+          "__typeConsistent": true
         }
       ]
     }

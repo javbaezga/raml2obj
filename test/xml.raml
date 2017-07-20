@@ -1,0 +1,88 @@
+#%RAML 1.0
+title: API with Types
+baseUri: /media
+
+types:
+  Person:
+    type: object
+    properties:
+      firstname:
+        type: string
+        description: example description
+      lastname:
+        type: string
+        required: false
+      addresses: string[]
+      age: number
+    example:
+      firstname: Pawel
+      lastname: Psztyc
+      addresses:
+        - London, Uk
+      age: 33
+  Person2:
+    properties:
+      name:
+        type: string
+        xml:
+          attribute: true # serialize it as an XML attribute
+          name: "fullname" # attribute should be called fullname
+      addresses:
+        type: Address[]
+        xml:
+          wrapped: true # serialize it into its own <addresses>...</addresses> XML element
+  Address:
+    properties:
+      street: string
+      city: string
+  Company:
+    properties:
+      name:
+        type: string
+        description: Company full name
+      address:
+        type: Address
+        xml:
+          wrapped: true
+      representative:
+        type: Person
+/users:
+  get:
+    responses:
+      200:
+        body:
+          application/xml:
+            type: Person
+            properties:
+              juan: string
+            example:
+              lastname: arkhipenko
+              firstname: nicolas
+              juan: juan
+              addresses:
+                - myadress
+              age: 123
+      205:
+        body:
+          application/xml:
+            type: Person2
+            properties:
+              occupation: string
+              company: Company
+            example:
+              name: Pawel
+              occupation: Software Engineer
+              addresses:
+                - street: 50 St Mary Axe
+                  city: London
+              company:
+                name: Mulesoft ltd
+                representative:
+                  firstname: John
+                  lastname: Doe
+                  age: 34
+                  addresses:
+                    - 50 St Mary Axe, London
+                address:
+                  street: 50 St Mary Axe
+                  city: London

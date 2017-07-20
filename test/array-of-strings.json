@@ -33,10 +33,10 @@
                   "type": "array",
                   "required": true,
                   "items": "string",
+                  "key": "application/json",
                   "examples": [
                     "[\n  \"somevalue\",\n  \"anothervalue\"\n]"
-                  ],
-                  "key": "application/json"
+                  ]
                 }
               ],
               "key": "200"

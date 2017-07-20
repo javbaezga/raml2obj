@@ -112,7 +112,7 @@ describe('raml2obj', () => {
       assert.strictEqual(post.allUriParameters.length, 2);
       assert.deepEqual(post.securedBy, customSchemeCompare);
       assert.strictEqual(post.body.length, 1);
-      assert.strictEqual(post.body[0].name, 'RamlDataType');
+      assert.strictEqual(post.body[0].name, 'application/json');
       assert.strictEqual(post.body[0].key, 'application/json');
       assert.strictEqual(post.body[0].type, 'object');
       assert.strictEqual(post.body[0].required, true);
@@ -144,7 +144,7 @@ describe('raml2obj', () => {
       assert.strictEqual(post.responses.length, 3);
       assert.strictEqual(post.responses[0].code, '200');
       assert.strictEqual(post.responses[0].body.length, 1);
-      assert.strictEqual(post.responses[0].body[0].name, 'AnotherEntry');
+      assert.strictEqual(post.responses[0].body[0].name, 'application/json');
       assert.strictEqual(post.responses[0].body[0].key, 'application/json');
       assert.strictEqual(post.responses[0].body[0].type, 'json');
       assert.strictEqual(post.responses[0].body[0].content.indexOf('{\n  "type": "array"'), 0);

@@ -73,10 +73,11 @@
           "key": "date"
         },
         {
-          "name": "User",
+          "name": "deprecatedBy",
           "displayName": "User",
           "type": "object",
           "required": true,
+          "key": "deprecatedBy",
           "additionalProperties": true,
           "properties": [
             {
@@ -100,8 +101,7 @@
           "examples": [
             "{\n  \"firstname\": \"John\"\n}"
           ],
-          "__typeConsistent": true,
-          "key": "deprecatedBy"
+          "__typeConsistent": true
         },
         {
           "name": "comment",
@@ -392,10 +392,11 @@
         {
           "body": [
             {
-              "name": "RamlDataType",
+              "name": "application/json",
               "displayName": "RamlDataType",
               "type": "object",
               "required": true,
+              "key": "application/json",
               "properties": [
                 {
                   "name": "propString",
@@ -574,7 +575,7 @@
                 },
                 [
                   {
-                    "name": "Cat",
+                    "name": "CatAndDog",
                     "displayName": "Cat",
                     "type": "object",
                     "required": true,
@@ -599,7 +600,7 @@
                     "__typeConsistent": true
                   },
                   {
-                    "name": "Dog",
+                    "name": "CatAndDog",
                     "displayName": "Dog",
                     "type": "object",
                     "required": true,
@@ -625,13 +626,14 @@
                   }
                 ],
                 {
-                  "name": "CustomDate",
+                  "name": "PossibleMeetingDate",
                   "displayName": "CustomDate",
                   "type": "date-only",
                   "required": true,
                   "fixedFacets": {
                     "noHolidays": true
                   },
+                  "key": "PossibleMeetingDate",
                   "facets": {
                     "onlyFutureDates": {
                       "type": {
@@ -645,13 +647,11 @@
                     }
                   },
                   "examples": [],
-                  "__typeConsistent": true,
-                  "key": "PossibleMeetingDate"
+                  "__typeConsistent": true
                 }
               ],
               "examples": [],
-              "__typeConsistent": true,
-              "key": "application/json"
+              "__typeConsistent": true
             }
           ],
           "protocols": [
@@ -823,15 +823,15 @@
               "code": "200",
               "body": [
                 {
-                  "name": "AnotherEntry",
+                  "name": "application/json",
                   "displayName": "AnotherEntry",
                   "type": "json",
                   "required": true,
+                  "key": "application/json",
                   "content": "{\n  \"type\": \"array\",\n  \"items\": {\n    \"$ref\": \"#/definitions/song\"\n  },\n  \"definitions\": {\n    \"song\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"title\": {\n          \"type\": \"string\"\n        },\n        \"artist\": {\n          \"type\": \"string\"\n        }\n      }\n    }\n  }\n}\n",
                   "description": "This is just another entry to simulate that you can add facets also on JSON\nschema defined types. Although you can only add documentation-based facets.\n",
                   "examples": [],
-                  "__typeConsistent": true,
-                  "key": "application/json"
+                  "__typeConsistent": true
                 }
               ],
               "key": "200"
@@ -1380,10 +1380,11 @@
                   "code": "200",
                   "body": [
                     {
-                      "name": "Song",
+                      "name": "application/json",
                       "displayName": "Song",
                       "type": "object",
                       "required": true,
+                      "key": "application/json",
                       "additionalProperties": true,
                       "examples": [
                         "{\n  \"title\": \"My Song\",\n  \"length\": 12\n}",
@@ -1405,18 +1406,17 @@
                           "key": "length"
                         }
                       ],
-                      "__typeConsistent": true,
-                      "key": "application/json"
+                      "__typeConsistent": true
                     },
                     {
                       "name": "application/xml",
                       "displayName": "application/xml",
                       "type": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"\n  elementFormDefault=\"qualified\" attributeFormDefault=\"unqualified\">\n  <xs:element name=\"song\">\n    <xs:complexType>\n      <xs:sequence>\n        <xs:element name=\"title\" type=\"xs:string\" />\n        <xs:element name=\"artist\" type=\"xs:string\" />\n      </xs:sequence>\n    </xs:complexType>\n  </xs:element>\n</xs:schema>\n",
                       "required": true,
+                      "key": "application/xml",
                       "examples": [
                         "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<song>\n  <title>str1234</title>\n  <artist>str1234</artist>\n</song>\n"
-                      ],
-                      "key": "application/xml"
+                      ]
                     }
                   ],
                   "key": "200"
@@ -1682,38 +1682,43 @@
       "displayName": "Comment",
       "name": "Comment",
       "required": true,
-      "properties": {
-        "author": {
+      "properties": [
+        {
           "type": "string",
           "displayName": "author",
           "name": "author",
-          "required": true
+          "required": true,
+          "key": "author"
         },
-        "body": {
+        {
           "type": "string",
           "displayName": "body",
           "name": "body",
-          "required": true
+          "required": true,
+          "key": "body"
         },
-        "date": {
+        {
           "type": "integer",
           "displayName": "date",
           "name": "date",
-          "required": true
+          "required": true,
+          "key": "date"
         },
-        "editAuthor": {
+        {
           "type": "string",
           "displayName": "editAuthor",
           "name": "editAuthor",
-          "required": false
+          "required": false,
+          "key": "editAuthor"
         },
-        "edited": {
+        {
           "type": "integer",
           "displayName": "edited",
           "name": "edited",
-          "required": false
+          "required": false,
+          "key": "edited"
         }
-      }
+      ]
     },
     "Entry": {
       "type": "json",
@@ -1736,15 +1741,15 @@
       "displayName": "User",
       "name": "User",
       "required": true,
-      "properties": {
-        "firstname": {
+      "properties": [
+        {
           "type": "string",
           "displayName": "firstname",
           "name": "firstname",
           "required": true,
           "key": "firstname"
         },
-        "lastname": {
+        {
           "type": "string",
           "displayName": "lastname",
           "name": "lastname",
@@ -1754,7 +1759,7 @@
           ],
           "key": "lastname"
         }
-      },
+      ],
       "examples": [
         "{\n  \"firstname\": \"John\"\n}"
       ]
@@ -1764,15 +1769,15 @@
       "displayName": "RamlDataType",
       "type": "object",
       "required": true,
-      "properties": {
-        "propString": {
+      "properties": [
+        {
           "name": "propString",
           "displayName": "propString",
           "type": "string",
           "required": true,
           "key": "propString"
         },
-        "propStringArray1": {
+        {
           "name": "propStringArray1",
           "displayName": "propStringArray1",
           "type": "array",
@@ -1780,7 +1785,7 @@
           "items": "string",
           "key": "propStringArray1"
         },
-        "ideas": {
+        {
           "name": "ideas",
           "displayName": "ideas",
           "type": "array",
@@ -1802,7 +1807,7 @@
           },
           "key": "ideas"
         },
-        "extIdeas": {
+        {
           "name": "extIdeas",
           "displayName": "extIdeas",
           "required": true,
@@ -1832,7 +1837,7 @@
           },
           "key": "extIdeas"
         },
-        "feedback": {
+        {
           "name": "feedback",
           "displayName": "feedback",
           "type": "string",
@@ -1846,7 +1851,7 @@
           ],
           "key": "feedback"
         },
-        "propNumber": {
+        {
           "name": "propNumber",
           "displayName": "propNumber",
           "type": "number",
@@ -1860,7 +1865,7 @@
           },
           "key": "propNumber"
         },
-        "propInteger": {
+        {
           "name": "propInteger",
           "displayName": "propInteger",
           "type": "integer",
@@ -1874,14 +1879,14 @@
           },
           "key": "propInteger"
         },
-        "propBoolean": {
+        {
           "name": "propBoolean",
           "displayName": "propBoolean",
           "type": "boolean",
           "required": true,
           "key": "propBoolean"
         },
-        "propDate": {
+        {
           "name": "propDate",
           "displayName": "propDate",
           "type": "date-only",
@@ -1891,7 +1896,7 @@
           ],
           "key": "propDate"
         },
-        "userPicture": {
+        {
           "name": "userPicture",
           "displayName": "userPicture",
           "type": "file",
@@ -1910,7 +1915,7 @@
           },
           "key": "userPicture"
         },
-        "NilValue": {
+        {
           "name": "NilValue",
           "displayName": "NilValue",
           "type": "object",
@@ -1933,16 +1938,16 @@
           ],
           "key": "NilValue"
         },
-        "CatOrDog": {
+        {
           "name": "CatOrDog",
           "displayName": "CatOrDog",
           "type": "ApiLib.Cat | ApiLib.Dog",
           "required": true,
           "key": "CatOrDog"
         },
-        "CatAndDog": [
+        [
           {
-            "name": "Cat",
+            "name": "CatAndDog",
             "displayName": "Cat",
             "type": "object",
             "required": true,
@@ -1967,7 +1972,7 @@
             "__typeConsistent": true
           },
           {
-            "name": "Dog",
+            "name": "CatAndDog",
             "displayName": "Dog",
             "type": "object",
             "required": true,
@@ -1992,14 +1997,15 @@
             "__typeConsistent": true
           }
         ],
-        "PossibleMeetingDate": {
-          "name": "CustomDate",
+        {
+          "name": "PossibleMeetingDate",
           "displayName": "CustomDate",
           "type": "date-only",
           "required": true,
           "fixedFacets": {
             "noHolidays": true
           },
+          "key": "PossibleMeetingDate",
           "facets": {
             "onlyFutureDates": {
               "type": {
@@ -2013,10 +2019,9 @@
             }
           },
           "examples": [],
-          "__typeConsistent": true,
-          "key": "PossibleMeetingDate"
+          "__typeConsistent": true
         }
-      }
+      ]
     },
     "ApiLib.Cat": {
       "additionalProperties": true,
@@ -2024,22 +2029,22 @@
       "displayName": "Cat",
       "name": "Cat",
       "required": true,
-      "properties": {
-        "name": {
+      "properties": [
+        {
           "type": "string",
           "displayName": "name",
           "name": "name",
           "required": true,
           "key": "name"
         },
-        "color": {
+        {
           "type": "string",
           "displayName": "color",
           "name": "color",
           "required": true,
           "key": "color"
         }
-      }
+      ]
     },
     "ApiLib.Dog": {
       "additionalProperties": true,
@@ -2047,22 +2052,22 @@
       "displayName": "Dog",
       "name": "Dog",
       "required": true,
-      "properties": {
-        "name": {
+      "properties": [
+        {
           "type": "string",
           "displayName": "name",
           "name": "name",
           "required": true,
           "key": "name"
         },
-        "fangs": {
+        {
           "type": "string",
           "displayName": "fangs",
           "name": "fangs",
           "required": true,
           "key": "fangs"
         }
-      }
+      ]
     },
     "ApiLib.CustomDate": {
       "type": "date-only",
@@ -2092,22 +2097,22 @@
         "{\n  \"title\": \"Last\",\n  \"length\": 3\n}"
       ],
       "required": true,
-      "properties": {
-        "title": {
+      "properties": [
+        {
           "type": "string",
           "displayName": "title",
           "name": "title",
           "required": true,
           "key": "title"
         },
-        "length": {
+        {
           "type": "number",
           "displayName": "length",
           "name": "length",
           "required": true,
           "key": "length"
         }
-      }
+      ]
     }
   }
 }

@@ -28,10 +28,11 @@
               "code": "200",
               "body": [
                 {
-                  "name": "Foos",
+                  "name": "application/json",
                   "displayName": "Foos",
                   "type": "array",
                   "required": true,
+                  "key": "application/json",
                   "items": {
                     "additionalProperties": true,
                     "type": "object",
@@ -49,8 +50,7 @@
                     ]
                   },
                   "examples": [],
-                  "__typeConsistent": true,
-                  "key": "application/json"
+                  "__typeConsistent": true
                 }
               ],
               "key": "200"

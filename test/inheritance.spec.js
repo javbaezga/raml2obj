@@ -25,30 +25,34 @@ describe('raml2obj', () => {
       assert.strictEqual(properties.length, 5);
     });
 
-    it('should test type inheritance', () => {
-
-      assert.strictEqual(properties[0].displayName, 'name');
+    it('Inline declared properties are firest in array', () => {
+      assert.strictEqual(properties[0].displayName, 'additional');
       assert.strictEqual(properties[0].type, 'string');
+    });
 
-      assert.strictEqual(properties[1].displayName, 'email');
+    it('should inherit rest of properties', () => {
+      assert.strictEqual(properties[1].displayName, 'name');
       assert.strictEqual(properties[1].type, 'string');
-      assert.strictEqual(properties[1].pattern, '^.+@.+\\..+$');
 
-      assert.strictEqual(properties[2].displayName, 'gender');
+      assert.strictEqual(properties[2].displayName, 'email');
       assert.strictEqual(properties[2].type, 'string');
-      assert.strictEqual(properties[2].enum.length, 2);
+      assert.strictEqual(properties[2].pattern, '^.+@.+\\..+$');
 
-      assert.strictEqual(properties[3].displayName, 'password');
+      assert.strictEqual(properties[3].displayName, 'gender');
       assert.strictEqual(properties[3].type, 'string');
+      assert.strictEqual(properties[3].enum.length, 2);
+
+      assert.strictEqual(properties[4].displayName, 'password');
+      assert.strictEqual(properties[4].type, 'string');
     });
 
     it('should expand a type', () => {
       let props = obj.types.PasswordProtectedAccount.properties;
-      assert.lengthOf(Object.keys(props), 4);
+      assert.lengthOf(props, 4);
     });
 
     it('should expand type properties', () => {
-      assert.deepEqual(obj.types.Account.properties.email.name, 'email');
+      assert.equal(obj.types.Account.properties[1].name, 'email');
     });
   });
 });
