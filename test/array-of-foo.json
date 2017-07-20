@@ -48,6 +48,8 @@
                       }
                     ]
                   },
+                  "examples": [],
+                  "__typeConsistent": true,
                   "key": "application/json"
                 }
               ],

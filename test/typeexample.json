@@ -16,6 +16,7 @@
               "examples": [
                 "576bca8b70fddb149c4a9e92"
               ],
+              "__typeConsistent": true,
               "key": "id"
             }
           ],
@@ -32,6 +33,7 @@
           "examples": [
             "576bca8b70fddb149c4a9e92"
           ],
+          "__typeConsistent": true,
           "key": "id"
         }
       ],
@@ -52,6 +54,7 @@
           "examples": [
             "576bca8b70fddb149c4a9e92"
           ],
+          "__typeConsistent": true,
           "key": "id"
         }
       ]

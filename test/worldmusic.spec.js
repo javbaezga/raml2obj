@@ -32,7 +32,7 @@ describe('raml2obj', () => {
     }];
 
     before(() => {
-      return parser('worldmusic.raml')
+      return parser('test/worldmusic.raml')
       .then(result => raml2obj.parse(result))
       .then((result) => {
         obj = result;

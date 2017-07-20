@@ -9,7 +9,7 @@ describe('raml2obj', () => {
     let obj;
 
     before(() => {
-      return parser('typeexample.raml')
+      return parser('test/typeexample.raml')
       .then(result => raml2obj.parse(result))
       .then((result) => {
         obj = result;

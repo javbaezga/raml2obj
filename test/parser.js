@@ -5,5 +5,7 @@ module.exports = function(source) {
   .loadApi(source, {
     rejectOnErrors: false
   })
-  .then(result => result.expand(true).toJSON({serializeMetadata: false}));
+  .then(result => {
+    return result.expand(true).toJSON({serializeMetadata: false});
+  });
 };

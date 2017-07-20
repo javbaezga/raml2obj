@@ -53,6 +53,8 @@
                 }
               ],
               "additionalProperties": true,
+              "examples": [],
+              "__typeConsistent": true,
               "key": "application/json"
             }
           ],
@@ -151,13 +153,6 @@
           "name": "password",
           "required": true,
           "key": "password"
-        },
-        "additional": {
-          "name": "additional",
-          "displayName": "additional",
-          "type": "string",
-          "required": true,
-          "key": "additional"
         }
       }
     }

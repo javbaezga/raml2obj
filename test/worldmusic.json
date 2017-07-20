@@ -100,6 +100,7 @@
           "examples": [
             "{\n  \"firstname\": \"John\"\n}"
           ],
+          "__typeConsistent": true,
           "key": "deprecatedBy"
         },
         {
@@ -593,7 +594,9 @@
                         "required": true,
                         "key": "color"
                       }
-                    ]
+                    ],
+                    "examples": [],
+                    "__typeConsistent": true
                   },
                   {
                     "name": "Dog",
@@ -616,7 +619,9 @@
                         "required": true,
                         "key": "fangs"
                       }
-                    ]
+                    ],
+                    "examples": [],
+                    "__typeConsistent": true
                   }
                 ],
                 {
@@ -639,9 +644,13 @@
                       }
                     }
                   },
+                  "examples": [],
+                  "__typeConsistent": true,
                   "key": "PossibleMeetingDate"
                 }
               ],
+              "examples": [],
+              "__typeConsistent": true,
               "key": "application/json"
             }
           ],
@@ -820,6 +829,8 @@
                   "required": true,
                   "content": "{\n  \"type\": \"array\",\n  \"items\": {\n    \"$ref\": \"#/definitions/song\"\n  },\n  \"definitions\": {\n    \"song\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"title\": {\n          \"type\": \"string\"\n        },\n        \"artist\": {\n          \"type\": \"string\"\n        }\n      }\n    }\n  }\n}\n",
                   "description": "This is just another entry to simulate that you can add facets also on JSON\nschema defined types. Although you can only add documentation-based facets.\n",
+                  "examples": [],
+                  "__typeConsistent": true,
                   "key": "application/json"
                 }
               ],
@@ -1394,6 +1405,7 @@
                           "key": "length"
                         }
                       ],
+                      "__typeConsistent": true,
                       "key": "application/json"
                     },
                     {
@@ -1950,7 +1962,9 @@
                 "required": true,
                 "key": "color"
               }
-            ]
+            ],
+            "examples": [],
+            "__typeConsistent": true
           },
           {
             "name": "Dog",
@@ -1973,7 +1987,9 @@
                 "required": true,
                 "key": "fangs"
               }
-            ]
+            ],
+            "examples": [],
+            "__typeConsistent": true
           }
         ],
         "PossibleMeetingDate": {
@@ -1996,6 +2012,8 @@
               }
             }
           },
+          "examples": [],
+          "__typeConsistent": true,
           "key": "PossibleMeetingDate"
         }
       }

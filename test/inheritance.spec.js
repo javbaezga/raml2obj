@@ -1,7 +1,6 @@
 /* eslint-env node, mocha */
-
 const raml2obj = require('..');
-const assert = require('assert');
+const {assert} = require('chai');
 const parser = require('./parser');
 
 describe('raml2obj', () => {
@@ -9,7 +8,7 @@ describe('raml2obj', () => {
     let obj;
     let properties;
     before(() => {
-      return parser('inheritance.raml')
+      return parser('test/inheritance.raml')
       .then(result => raml2obj.parse(result))
       .then((result) => {
         obj = result;
@@ -41,6 +40,15 @@ describe('raml2obj', () => {
 
       assert.strictEqual(properties[3].displayName, 'password');
       assert.strictEqual(properties[3].type, 'string');
+    });
+
+    it('should expand a type', () => {
+      let props = obj.types.PasswordProtectedAccount.properties;
+      assert.lengthOf(Object.keys(props), 4);
+    });
+
+    it('should expand type properties', () => {
+      assert.deepEqual(obj.types.Account.properties.email.name, 'email');
     });
   });
 });
