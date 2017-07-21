@@ -88,7 +88,7 @@ module.exports.expandTypes = function(types, opts) {
   if (opts.analyze) {
     result.analyzer = [];
   }
-  if (!types || !types.length) {
+  if (!types || !Object.keys(types).length) {
     return Promise.resolve(result);
   }
   var analyzer;
