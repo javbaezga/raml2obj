@@ -45,6 +45,7 @@ module.exports.parse = function(json) {
  * object and depending on `opts` it may have `analyzer` property.
  */
 module.exports.prepareObject = function(json, opts) {
+  opts = opts || {};
   const result = {
     json: []
   };
@@ -82,6 +83,7 @@ module.exports.prepareObject = function(json, opts) {
  * - `analyzer` {?Array} Optional, if `opts.analyze` is set, result of analyzer
  */
 module.exports.expandTypes = function(types, opts) {
+  opts = opts || {};
   const result = {
     types: []
   };
@@ -120,6 +122,7 @@ module.exports.expandTypes = function(types, opts) {
  * - `analyzer` {?Array} Optional, if `opts.analyze` is set, result of analyzer
  */
 module.exports.normalize = function(json, types, opts) {
+  opts = opts || {};
   const result = {
     json: []
   };
