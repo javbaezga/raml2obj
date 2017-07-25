@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/advanced-rest-client/raml2obj.svg?branch=master)](https://travis-ci.org/advanced-rest-client/raml2obj)
+
 # RAML to object (ARC version)
 
 This is a fork of [raml2obj](https://github.com/raml2html/raml2obj) library that

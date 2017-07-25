@@ -13,7 +13,6 @@
  * Use `npm run browser` to build the script in `./build` folder. Final library if the
  * `raml2object.js`. It exposes `window.raml2object.parse` function to be used with parser output.
  */
-const {PerformanceAnalyzer} = require('./lib/analyzer');
 const {RamlJsonEnhancer} = require('./lib/enhencer');
 const {arraysToObjects} = require('./lib/arrays-objects');
 const {ExpansionLibrary} = require('./lib/expander');
@@ -38,36 +37,19 @@ module.exports.parse = function(json) {
  * It normalizes objects structure.
  *
  * @param {Object} json RALM js parser json output.
- * @param {?Object} opts Additional options:
- * - `analyze` {Boolean} If set it will return stats from `analyzer`
  * @return {Promise} Resolved promise to normalized Object that can be used to
  * expand root types. Resolved object have `json` property with transformed
- * object and depending on `opts` it may have `analyzer` property.
+ * object.
  */
-module.exports.prepareObject = function(json, opts) {
+module.exports.prepareObject = function(json) {
   const result = {
     json: []
   };
-  if (opts.analyze) {
-    result.analyzer = [];
-  }
   if (!json) {
     return Promise.resolve(result);
   }
-  var analyzer;
-  if (opts.analyze) {
-    analyzer = new PerformanceAnalyzer(true);
-    analyzer.mark('raml2obj-prepare-json-start');
-  }
   arraysToObjects(json);
-  if (opts.analyze) {
-    analyzer = new PerformanceAnalyzer(true);
-    analyzer.mark('raml2obj-prepare-json-stop');
-  }
   result.json = json;
-  if (opts.analyze) {
-    result.analyzer = analyzer.getMeasurements('raml2obj-prepare-json');
-  }
   return Promise.resolve(result);
 };
 
@@ -75,33 +57,18 @@ module.exports.prepareObject = function(json, opts) {
  * A function to be called to expand RAML types.
  *
  * @param {Array} types List of types to expand.
- * @param {?Object} opts Additional options:
- * - `analyze` {Boolean} If set it will return stats from `analyzer`
  * @return {Promise} Resolved promise to an Object:
  * - `types` {Array} expanded root types
- * - `analyzer` {?Array} Optional, if `opts.analyze` is set, result of analyzer
  */
-module.exports.expandTypes = function(types, opts) {
+module.exports.expandTypes = function(types) {
   const result = {
     types: []
   };
-  if (opts.analyze) {
-    result.analyzer = [];
-  }
   if (!types || !Object.keys(types).length) {
     return Promise.resolve(result);
   }
-  var analyzer;
-  if (opts.analyze) {
-    analyzer = new PerformanceAnalyzer(true);
-    analyzer.mark('raml2obj-expanding-root-types-start');
-  }
   return ExpansionLibrary.expandRootTypes(types)
   .then((expanded) => {
-    if (opts.analyze) {
-      analyzer.mark('raml2obj-expanding-root-types-end');
-      result.analyzer = analyzer.getMeasurements('raml2obj-expanding-root-types');
-    }
     result.types = expanded;
     return result;
   });
@@ -113,35 +80,18 @@ module.exports.expandTypes = function(types, opts) {
  *
  * @param {Object} json RALM js parser json output.
  * @param {?Array} types RAML (expanded) root types.
- * @param {?Object} opts Additional options:
- * - `analyze` {Boolean} If set it will return stats from `analyzer`
  * @return {Promise} Resolved promise to an Object:
  * - `json` {Object} Normalized RAML object
- * - `analyzer` {?Array} Optional, if `opts.analyze` is set, result of analyzer
  */
-module.exports.normalize = function(json, types, opts) {
+module.exports.normalize = function(json, types) {
   const result = {
     json: []
   };
-  if (opts.analyze) {
-    result.analyzer = [];
-  }
   if (!json) {
     return Promise.resolve(result);
   }
-  var analyzer;
-  if (opts.analyze) {
-    analyzer = new PerformanceAnalyzer(true);
-    analyzer.mark('raml2obj-normalize-start');
-  }
-  const r2o = new RamlJsonEnhancer(opts);
+  const r2o = new RamlJsonEnhancer();
   json = r2o.normalize(json, types);
-  if (opts.analyze) {
-    analyzer.mark('raml2obj-normalize-stop');
-  }
   result.json = json;
-  if (opts.analyze) {
-    result.analyzer = analyzer.getMeasurements('raml2obj-normalize-json');
-  }
   return Promise.resolve(result);
 };
