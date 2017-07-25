@@ -1,7 +1,7 @@
 {
   "name": "raml2obj",
   "description": "RAML to object",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "author": {
     "name": "Kevin Renskers",
     "email": "info@mixedcase.nl"
@@ -14,13 +14,8 @@
   },
   "devDependencies": {
     "chai": "^4.1.0",
-    "babel-cli": "^6.18.0",
-    "babel-preset-es2015": "^6.18.0",
-    "eslint": "3.11.x",
-    "eslint-config-loopwerk": "6.0.x",
     "glob": "7.1.x",
     "mocha": "3.2.x",
-    "uglify-js": "^2.7.5",
     "raml-1-parser": "1.1.9"
   },
   "homepage": "https://github.com/raml2html/raml2obj",
@@ -36,10 +31,7 @@
   "preferGlobal": false,
   "scripts": {
     "json": "node test/output-json.js",
-    "lint": "eslint ./",
-    "lintfix": "eslint --fix ./",
-    "test": "mocha 'test/*.spec.js' --reporter progress",
-    "browser": "./node_modules/.bin/browserify browser.js -o build/browserified.js --ignore datatype-expansion && ./node_modules/.bin/babel build/browserified.js > build/babeled.js && ./node_modules/.bin/uglifyjs --screw-ie8 build/babeled.js > build/raml2object.js"
+    "test": "mocha -t 20000 'test/*.spec.js'"
   },
   "files": [
     "index.js",

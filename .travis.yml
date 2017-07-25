@@ -1,7 +1,7 @@
 language: node_js
 dist: trusty
 node_js: stable
-script: "-npm test"
+script: "npm test"
 env:
   global:
   - secure: Q40uAyIda8L4FbiOA6bH4pmkcRMvTNT3JiSHOFXqnWPn9ZTdnXfpCmH8xLZ9ac9DshGaq0PAP1jUsbnXgiR+MiHuVnoKXaY+KxqdJL+xBL2t594MMTzPHc6RyxtUMVQHPXAvqJFJPQ8yGc0SI/GTaqx+7apNfOcdz9SrQ6oPn3E159H+LzuJtxg1rBC1ihinJC8bfuxRCC3yziVhSaeEN7cHMNtzN4TGaoZDJi8zwMbw3M8BL82qpS4Fm5LV20vAyyAOf9l+xxdplMMf0H1B7aAeCrcflwGFBIpYN1AgE+TlltpTN8FRwlYsJGTfmd8jcY3dHtJHF60c8x/qDxsfBvBmxFgc1GfgqzcP+UPp73Mq7g6cgotgV5c/Rgt/ekIsC5+kcQO0Sl09UrWPWRrspd7qD7NSq/sihND/9WRl2+U9HHcmPH6q8MDFBGDhtenUTlsSl+J932tkS85amugDDJRYwHxsOxrNnfwaeKPtoLtloNCqBjb6zJ37ZrzU2/yuo2+D++jY2pe+sYMCnomFZSvDq9LE5nin71jpvj5+y3ojW2GiOoG7CgxfgW2gFZRj008X04XA/DmodQ3tMCkXKR6Winm5+rNZdH1F5GzY4bK0LDAM+X4F06BKXqJQ/LFd0c49qncF2d4FR8JjikaNUWLLfLDs6zl0JSNELqu8qaU=
