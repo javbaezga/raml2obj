@@ -1,72 +1,75 @@
 {
-    "title": "Test",
-    "resources": [
+  "title": "Test",
+  "resources": [
+    {
+      "methods": [
         {
-            "methods": [
-                {
-                    "description": "bla",
-                    "method": "get",
-                    "allUriParameters": [
-                        {
-                            "name": "objectid",
-                            "displayName": "objectid",
-                            "type": "string",
-                            "required": true,
-                            "description": "A valid MongoDB object id.",
-                            "examples": [
-                                "576bca8b70fddb149c4a9e92"
-                            ],
-                            "key": "id"
-                        }
-                    ]
-                }
-            ],
-            "uriParameters": [
-                {
-                    "name": "objectid",
-                    "displayName": "objectid",
-                    "type": "string",
-                    "required": true,
-                    "description": "A valid MongoDB object id.",
-                    "examples": [
-                        "576bca8b70fddb149c4a9e92"
-                    ],
-                    "key": "id"
-                }
-            ],
-            "relativeUri": "/company",
-            "displayName": "/company",
-            "relativeUriPathSegments": [
-                "company"
-            ],
-            "absoluteUri": "/company",
-            "parentUrl": "",
-            "uniqueId": "company",
-            "allUriParameters": [
-                {
-                    "name": "objectid",
-                    "displayName": "objectid",
-                    "type": "string",
-                    "required": true,
-                    "description": "A valid MongoDB object id.",
-                    "examples": [
-                        "576bca8b70fddb149c4a9e92"
-                    ],
-                    "key": "id"
-                }
-            ]
-        }
-    ],
-    "types": {
-        "objectid": {
-            "type": "string",
-            "description": "A valid MongoDB object id.",
-            "displayName": "objectid",
-            "name": "objectid",
-            "required": true,
-            "examples": [
+          "description": "bla",
+          "method": "get",
+          "allUriParameters": [
+            {
+              "name": "id",
+              "displayName": "objectid",
+              "type": "string",
+              "required": true,
+              "key": "id",
+              "description": "A valid MongoDB object id.",
+              "examples": [
                 "576bca8b70fddb149c4a9e92"
-            ]
+              ],
+              "__typeConsistent": true
+            }
+          ],
+          "absoluteUri": "/company"
         }
+      ],
+      "uriParameters": [
+        {
+          "name": "id",
+          "displayName": "objectid",
+          "type": "string",
+          "required": true,
+          "key": "id",
+          "description": "A valid MongoDB object id.",
+          "examples": [
+            "576bca8b70fddb149c4a9e92"
+          ],
+          "__typeConsistent": true
+        }
+      ],
+      "relativeUri": "/company",
+      "displayName": "/company",
+      "relativeUriPathSegments": [
+        "company"
+      ],
+      "absoluteUri": "/company",
+      "parentUrl": "",
+      "allUriParameters": [
+        {
+          "name": "id",
+          "displayName": "objectid",
+          "type": "string",
+          "required": true,
+          "key": "id",
+          "description": "A valid MongoDB object id.",
+          "examples": [
+            "576bca8b70fddb149c4a9e92"
+          ],
+          "__typeConsistent": true
+        }
+      ]
     }
+  ],
+  "types": {
+    "objectid": {
+      "type": "string",
+      "description": "A valid MongoDB object id.",
+      "displayName": "objectid",
+      "name": "objectid",
+      "required": true,
+      "examples": [
+        "576bca8b70fddb149c4a9e92"
+      ]
+    }
+  }
 }

@@ -2,19 +2,40 @@
 
 const raml2obj = require('..');
 const assert = require('assert');
+const parser = require('./parser');
 
 describe('raml2obj', () => {
-  describe('worldmusic.raml', function () {
+  describe('worldmusic.raml', function() {
     this.timeout(10000);
 
     let obj;
+    const customSchemeCompare = [{
+      name: 'custom_scheme',
+      type: 'x-custom',
+      description: 'A custom security scheme for authenticating requests.\n',
+      describedBy: {
+        headers: [{
+            name: 'SpecialToken',
+            displayName: 'SpecialToken',
+            type: 'string',
+            required: true,
+            description: 'Used to send a custom token.\n',
+            key: 'SpecialToken'
+          }],
+        responses: [{
+            code: '401',
+            description: 'Bad token.\n'
+          }, {
+            code: '403'
+          }]
+      }
+    }];
 
-    before((done) => {
-      raml2obj.parse('test/worldmusic.raml').then((result) => {
+    before(() => {
+      return parser('test/worldmusic.raml')
+      .then(result => raml2obj.parse(result))
+      .then((result) => {
         obj = result;
-        done();
-      }, (error) => {
-        console.log(JSON.stringify(error));
       });
     });
 
@@ -47,11 +68,9 @@ describe('raml2obj', () => {
 
       assert.strictEqual(first.title, 'Getting Started');
       assert.strictEqual(first.content, 'This is a getting started guide for the World Music API.\n');
-      assert.strictEqual(first.uniqueId, 'getting_started');
 
       assert.strictEqual(second.title, 'Legal');
       assert.strictEqual(second.content, 'See http://legal.musicapi.com');
-      assert.strictEqual(second.uniqueId, 'legal');
     });
 
     it('should test the /api resource', () => {
@@ -60,9 +79,8 @@ describe('raml2obj', () => {
       assert.strictEqual(resource.relativeUri, '/api');
       assert.strictEqual(resource.displayName, '/api');
       assert.strictEqual(resource.parentUrl, '');
-      assert.strictEqual(resource.uniqueId, 'api');
-      assert.deepEqual(resource.securedBy, ['custom_scheme']);
-      assert.strictEqual(resource.allUriParameters.length, 0);
+      assert.deepEqual(resource.securedBy, customSchemeCompare);
+      assert.strictEqual(resource.allUriParameters.length, 2);
     });
 
     it('should test the /api methods', () => {
@@ -73,8 +91,8 @@ describe('raml2obj', () => {
       const get = methods[0];
 
       assert.strictEqual(get.method, 'get');
-      assert.strictEqual(get.allUriParameters.length, 0);
-      assert.deepEqual(get.securedBy, ['custom_scheme']);
+      assert.strictEqual(get.allUriParameters.length, 2);
+      assert.deepEqual(get.securedBy, customSchemeCompare);
 
       assert.strictEqual(get.queryString.name, 'queryString');
       assert.strictEqual(get.queryString.type, 'object');
@@ -91,10 +109,10 @@ describe('raml2obj', () => {
       const post = methods[1];
 
       assert.strictEqual(post.method, 'post');
-      assert.strictEqual(post.allUriParameters.length, 0);
-      assert.deepEqual(post.securedBy, ['custom_scheme']);
+      assert.strictEqual(post.allUriParameters.length, 2);
+      assert.deepEqual(post.securedBy, customSchemeCompare);
       assert.strictEqual(post.body.length, 1);
-      assert.strictEqual(post.body[0].name, 'RamlDataType');
+      assert.strictEqual(post.body[0].name, 'application/json');
       assert.strictEqual(post.body[0].key, 'application/json');
       assert.strictEqual(post.body[0].type, 'object');
       assert.strictEqual(post.body[0].required, true);
@@ -108,10 +126,9 @@ describe('raml2obj', () => {
       assert.strictEqual(resource.relativeUri, '/entry');
       assert.strictEqual(resource.displayName, '/entry');
       assert.strictEqual(resource.parentUrl, '');
-      assert.strictEqual(resource.uniqueId, 'entry');
       assert.strictEqual(resource.type, 'collection');
-      assert.deepEqual(resource.securedBy, ['custom_scheme']);
-      assert.strictEqual(resource.allUriParameters.length, 0);
+      assert.deepEqual(resource.securedBy, customSchemeCompare);
+      assert.strictEqual(resource.allUriParameters.length, 2);
     });
 
     it('should test the /entry methods', () => {
@@ -122,12 +139,12 @@ describe('raml2obj', () => {
       const post = methods[0];
 
       assert.strictEqual(post.method, 'post');
-      assert.strictEqual(post.allUriParameters.length, 0);
-      assert.deepEqual(post.securedBy, ['custom_scheme']);
-      assert.strictEqual(post.responses.length, 1);
+      assert.strictEqual(post.allUriParameters.length, 2);
+      assert.deepEqual(post.securedBy, customSchemeCompare);
+      assert.strictEqual(post.responses.length, 3);
       assert.strictEqual(post.responses[0].code, '200');
       assert.strictEqual(post.responses[0].body.length, 1);
-      assert.strictEqual(post.responses[0].body[0].name, 'AnotherEntry');
+      assert.strictEqual(post.responses[0].body[0].name, 'application/json');
       assert.strictEqual(post.responses[0].body[0].key, 'application/json');
       assert.strictEqual(post.responses[0].body[0].type, 'json');
       assert.strictEqual(post.responses[0].body[0].content.indexOf('{\n  "type": "array"'), 0);
@@ -136,9 +153,9 @@ describe('raml2obj', () => {
 
       assert.strictEqual(get.method, 'get');
       assert.strictEqual(get.description, 'returns a list of entry');
-      assert.strictEqual(get.allUriParameters.length, 0);
-      assert.deepEqual(get.securedBy, ['custom_scheme']);
-      assert.strictEqual(get.responses.length, 1);
+      assert.strictEqual(get.allUriParameters.length, 2);
+      assert.deepEqual(get.securedBy, customSchemeCompare);
+      assert.strictEqual(get.responses.length, 3);
       assert.strictEqual(get.responses[0].code, '200');
       assert.strictEqual(get.responses[0].body.length, 1);
       assert.strictEqual(get.responses[0].body[0].name, 'application/json');
@@ -152,9 +169,8 @@ describe('raml2obj', () => {
       assert.strictEqual(resource.displayName, 'Songs');
       assert.strictEqual(resource.description, 'Access to all songs inside the music world library.');
       assert.strictEqual(resource.parentUrl, '');
-      assert.strictEqual(resource.uniqueId, 'songs');
-      assert.deepEqual(resource.securedBy, ['custom_scheme']);
-      assert.strictEqual(resource.allUriParameters.length, 0);
+      assert.deepEqual(resource.securedBy, customSchemeCompare);
+      assert.strictEqual(resource.allUriParameters.length, 2);
       assert.strictEqual(resource.annotations.length, 1);
       assert.strictEqual(resource.annotations[0].name, 'ready');
       assert.deepEqual(resource.is, ['secured']);
@@ -169,19 +185,20 @@ describe('raml2obj', () => {
       const get = methods[0];
 
       assert.strictEqual(get.method, 'get');
-      assert.strictEqual(get.allUriParameters.length, 0);
-      assert.deepEqual(get.securedBy, ['oauth_2_0', null]);
+      assert.strictEqual(get.allUriParameters.length, 2);
+      assert.equal(typeof get.securedBy[0], 'object');
+      assert.strictEqual(get.securedBy[1], null);
 
       assert.strictEqual(get.annotations.length, 1);
       assert.strictEqual(get.annotations[0].name, 'monitoringInterval');
       assert.strictEqual(get.annotations[0].structuredValue, 30);
 
-      assert.strictEqual(get.queryParameters.length, 2);
+      assert.strictEqual(get.queryParameters.length, 3);
 
       const post = methods[1];
 
       assert.strictEqual(post.method, 'post');
-      assert.deepEqual(post.securedBy, ['custom_scheme']);
+      assert.deepEqual(post.securedBy, customSchemeCompare);
       assert.strictEqual(post.queryParameters.length, 1);
     });
 
@@ -191,9 +208,8 @@ describe('raml2obj', () => {
       assert.strictEqual(resource.relativeUri, '/{songId}');
       assert.strictEqual(resource.displayName, '/{songId}');
       assert.strictEqual(resource.parentUrl, '/songs');
-      assert.strictEqual(resource.uniqueId, 'songs__songid_');
-      assert.deepEqual(resource.securedBy, ['custom_scheme']);
-      assert.strictEqual(resource.allUriParameters.length, 1);
+      assert.deepEqual(resource.securedBy, customSchemeCompare);
+      assert.strictEqual(resource.allUriParameters.length, 3);
     });
 
     it('should test the /songs/{songId} methods', () => {
@@ -204,10 +220,10 @@ describe('raml2obj', () => {
       const get = methods[0];
 
       assert.strictEqual(get.method, 'get');
-      assert.strictEqual(get.allUriParameters.length, 1);
+      assert.strictEqual(get.allUriParameters.length, 3);
       assert.strictEqual(get.annotations.length, 1);
-      assert.strictEqual(get.responses.length, 1);
-      assert.deepEqual(get.securedBy, ['custom_scheme']);
+      assert.strictEqual(get.responses.length, 3);
+      assert.deepEqual(get.securedBy, customSchemeCompare);
 
       assert.strictEqual(get.responses[0].body.length, 2);
       assert.strictEqual(get.responses[0].body[0].displayName, 'Song');

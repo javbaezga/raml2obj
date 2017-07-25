@@ -1,18 +1,23 @@
 const fs = require('fs');
 const raml2obj = require('..');
 const glob = require('glob');
+const parser = require('./parser');
 
 process.chdir(__dirname);
 
-const ramlFiles = glob.sync('*.raml').filter(ramlFile => ramlFile !== 'zeropointeight.raml');
+const ramlFiles = glob.sync('*.raml');
 
-ramlFiles.forEach((ramlFile) => {
+const ps = ramlFiles.map((ramlFile) => {
   console.log(ramlFile);
-  raml2obj.parse(ramlFile).then((result) => {
-    const jsonString = JSON.stringify(result, null, 4);
+  return parser(ramlFile)
+  .then(result => raml2obj.parse(result))
+  .then((result) => {
+    console.log('Saving', ramlFile);
+    const jsonString = JSON.stringify(result, null, 2);
     const filename = ramlFile.replace('.raml', '.json');
     fs.writeFileSync(filename, jsonString);
-  }, (error) => {
-    console.log(ramlFile, error);
   });
 });
+Promise.all(ps)
+.then(() => console.log('done'))
+.catch((cause) => console.error(cause));

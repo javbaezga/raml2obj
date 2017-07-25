@@ -2,17 +2,17 @@
 
 const raml2obj = require('..');
 const assert = require('assert');
+const parser = require('./parser');
 
 describe('raml2obj', () => {
   describe('array-of-strings.raml', () => {
     let obj;
 
-    before((done) => {
-      raml2obj.parse('test/array-of-strings.raml').then((result) => {
+    before(() => {
+      return parser('test/array-of-strings.raml')
+      .then(result => raml2obj.parse(result))
+      .then((result) => {
         obj = result;
-        done();
-      }, (error) => {
-        console.log('error', error);
       });
     });
 
