@@ -1,0 +1,23 @@
+#%RAML 0.8
+title: API Documentation
+baseUri: http://{apiDomain}:4080/analytics/{ver}
+baseUriParameters:
+  ver:
+    description: |
+      The version of the API
+    enum: ["v1"]
+  apiDomain:
+    description: |
+      The domain of the API
+    enum: ["validurlishere"]
+
+/resource:
+  get:
+    description: test
+/aggregate/contents:
+  baseUriParameters:
+    ver:
+      enum: ["v2"]
+  get:
+    description: |
+      Returns metrics
