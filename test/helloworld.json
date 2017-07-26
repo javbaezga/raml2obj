@@ -91,7 +91,7 @@
             "test"
           ],
           "absoluteUri": "http://example.com/{version}/helloworld/test",
-          "parentUrl": "/helloworld",
+          "parentUrl": "",
           "allUriParameters": [
             {
               "name": "version",

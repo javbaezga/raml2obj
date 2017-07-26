@@ -77,7 +77,7 @@
             "find"
           ],
           "absoluteUri": "/account/find",
-          "parentUrl": "/account",
+          "parentUrl": "",
           "allUriParameters": []
         },
         {
@@ -260,7 +260,7 @@
                 "{id}"
               ],
               "absoluteUri": "/account/{id}/{id}",
-              "parentUrl": "/account/{id}",
+              "parentUrl": "",
               "allUriParameters": [
                 {
                   "name": "id",
@@ -289,7 +289,7 @@
             "{id}"
           ],
           "absoluteUri": "/account/{id}",
-          "parentUrl": "/account",
+          "parentUrl": "",
           "allUriParameters": [
             {
               "name": "id",

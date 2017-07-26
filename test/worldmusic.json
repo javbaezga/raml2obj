@@ -1550,7 +1550,7 @@
             "{songId}"
           ],
           "absoluteUri": "http://{environment}.musicapi.com/{version}/songs/{songId}",
-          "parentUrl": "/songs",
+          "parentUrl": "",
           "allUriParameters": [
             {
               "name": "environment",
