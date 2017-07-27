@@ -1,7 +1,7 @@
 /* eslint-env node, mocha */
 
 const raml2obj = require('..');
-const assert = require('assert');
+const {assert} = require('chai');
 const parser = require('./parser');
 
 describe('raml2obj', () => {
@@ -114,10 +114,13 @@ describe('raml2obj', () => {
       assert.strictEqual(post.body.length, 1);
       assert.strictEqual(post.body[0].name, 'application/json');
       assert.strictEqual(post.body[0].key, 'application/json');
-      assert.strictEqual(post.body[0].type, 'object');
+      assert.strictEqual(post.body[0].type, 'union');
       assert.strictEqual(post.body[0].required, true);
-      assert.strictEqual(post.body[0].properties.length, 14);
-      assert.strictEqual(post.body[0].properties[4].examples[0], 'very well made');
+      assert.lengthOf(post.body[0].anyOf, 4);
+      assert.lengthOf(post.body[0].anyOf[0].properties, 14);
+      assert.lengthOf(post.body[0].anyOf[1].properties, 14);
+      assert.lengthOf(post.body[0].anyOf[2].properties, 14);
+      assert.lengthOf(post.body[0].anyOf[3].properties, 14);
     });
 
     it('should test the /entry resource', () => {
