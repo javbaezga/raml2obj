@@ -5,7 +5,7 @@ const assert = require('assert');
 const parser = require('./parser');
 
 describe('raml2obj', () => {
-  describe('array-of-foo.raml', () => {
+  describe('ac-issue-136.raml', () => {
     let obj;
 
     before(() => {
