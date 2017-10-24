@@ -25,7 +25,7 @@ const {ExpansionLibrary} = require('./lib/expander');
  * - `normalize()`
  *
  * @param {Object} json RALM js parser json output.
- * @return {Promise} Resolved promise to enhanced RAML object.
+ * @return {Object} Enhanced RAML object.
  */
 module.exports.parse = function(json) {
   const r2o = new RamlJsonEnhancer();
@@ -37,27 +37,27 @@ module.exports.parse = function(json) {
  * It normalizes objects structure.
  *
  * @param {Object} json RALM js parser json output.
- * @return {Promise} Resolved promise to normalized Object that can be used to
+ * @return {Object} Normalized Object that can be used to
  * expand root types. Resolved object have `json` property with transformed
- * object.
+ * data.
  */
 module.exports.prepareObject = function(json) {
   const result = {
     json: []
   };
   if (!json) {
-    return Promise.resolve(result);
+    return result;
   }
   arraysToObjects(json);
   result.json = json;
-  return Promise.resolve(result);
+  return result;
 };
 
 /**
  * A function to be called to expand RAML types.
  *
  * @param {Array} types List of types to expand.
- * @return {Promise} Resolved promise to an Object:
+ * @return {Object} Object with the following properties:
  * - `types` {Array} expanded root types
  */
 module.exports.expandTypes = function(types) {
@@ -65,13 +65,10 @@ module.exports.expandTypes = function(types) {
     types: []
   };
   if (!types || !Object.keys(types).length) {
-    return Promise.resolve(result);
-  }
-  return ExpansionLibrary.expandRootTypes(types)
-  .then((expanded) => {
-    result.types = expanded;
     return result;
-  });
+  }
+  result.types = ExpansionLibrary.expandRootTypes(types);
+  return result;
 };
 
 /**
@@ -80,7 +77,7 @@ module.exports.expandTypes = function(types) {
  *
  * @param {Object} json RALM js parser json output.
  * @param {?Array} types RAML (expanded) root types.
- * @return {Promise} Resolved promise to an Object:
+ * @return {Object}  Object with the following properties:
  * - `json` {Object} Normalized RAML object
  */
 module.exports.normalize = function(json, types) {
@@ -88,10 +85,10 @@ module.exports.normalize = function(json, types) {
     json: []
   };
   if (!json) {
-    return Promise.resolve(result);
+    return result;
   }
   const r2o = new RamlJsonEnhancer();
   json = r2o.normalize(json, types);
   result.json = json;
-  return Promise.resolve(result);
+  return result;
 };
