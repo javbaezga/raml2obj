@@ -1,7 +1,7 @@
 {
   "name": "raml2obj",
   "description": "RAML to object",
-  "version": "5.0.4",
+  "version": "5.1.0",
   "author": {
     "name": "Kevin Renskers",
     "email": "info@mixedcase.nl"
@@ -10,13 +10,13 @@
     "url": "https://github.com/raml2html/raml2obj/issues"
   },
   "dependencies": {
-    "datatype-expansion": "^0.2.3"
+    "datatype-expansion": "0.1.1"
   },
   "devDependencies": {
     "chai": "^4.1.0",
     "glob": "7.1.x",
     "mocha": "3.2.x",
-    "raml-1-parser": "^1.1.35"
+    "raml-1-parser": "1.1.9"
   },
   "homepage": "https://github.com/raml2html/raml2obj",
   "keywords": [

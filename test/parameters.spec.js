@@ -38,6 +38,7 @@ describe('raml2obj', () => {
       assert.strictEqual(method.body[0].name, 'application/json');
       assert.strictEqual(method.body[0].type, 'object');
       assert.strictEqual(method.body[0].examples[0], '{\n  "email": "john@example.com",\n  "password": "super_secret",\n  "name": "John Doe"\n}');
+      assert.strictEqual(method.body[0].required, true);
       assert.strictEqual(method.responses.length, 1);
       assert.strictEqual(method.responses[0].code, '200');
       assert.strictEqual(method.responses[0].description, 'Account was created and user is now logged in');
@@ -118,7 +119,7 @@ describe('raml2obj', () => {
       assert.strictEqual(put.body.length, 1);
       assert.strictEqual(put.body[0].name, 'application/x-www-form-urlencoded');
       assert.strictEqual(put.body[0].type, 'object');
-      // assert.strictEqual(put.body[0].required, true);
+      assert.strictEqual(put.body[0].required, true);
       assert.strictEqual(put.body[0].properties.length, 2);
       assert.strictEqual(put.body[0].properties[0].name, 'name');
       assert.strictEqual(put.body[0].properties[0].examples.length, 2);

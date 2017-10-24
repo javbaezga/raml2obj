@@ -22,7 +22,7 @@ describe('raml2obj', () => {
     });
 
     it('should contain inheritated and inline defined properties', () => {
-      assert.strictEqual(properties.length, 5);
+      assert.lengthOf(properties, 5);
     });
 
     it('Inline declared properties are firest in array', () => {
