@@ -1,0 +1,13 @@
+#%RAML 1.0
+title: Paths
+
+baseUri: /api/
+
+/resource:
+  get:
+    displayName: GET
+  /${sub}:
+    uriParameters:
+      sub: string
+    post:
+      displayName: POST
