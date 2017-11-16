@@ -19,6 +19,11 @@ types:
       lastname: Psztyc
       title: Mr.
       kind: Manager
+  Entity:
+    type: object
+    properties:
+      title: string
+      kind: string
   Phone:
     type: string
     pattern: "^[0-9|-]+$" # defines pattern for the content of type `Phone`
@@ -43,3 +48,4 @@ types:
     properties:
       phone: Phone # inherits all properties from type `Phone`; uses shortcut syntax
   Alertable: Manager | AlertableAdmin # union type; either a `Manager` or `AlertableAdmin`
+  AlterablePerson: Person | Entity

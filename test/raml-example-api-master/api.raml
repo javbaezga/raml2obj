@@ -134,6 +134,12 @@ documentation:
       If you have any question email me: arc@mulesoft.com
       Or slack me (internally only): Pawel Psztyc (P3)
 securedBy: [oauth_2_0, oauth_1_0, pass_through, basic, digest, x-custom, x-other]
+/unions:
+  get:
+    responses:
+      200:
+        body:
+          type: ExampleType.AlterablePerson
 /test-parameters/{feature}:
   (deprecated): This endpoint is deprecated and will be removed.
   uriParameters:
