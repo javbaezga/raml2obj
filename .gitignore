@@ -8,3 +8,4 @@ test/*.json
 .editorconfig
 .jscsrc
 .jshintrc
+.DS_Store
