@@ -12,9 +12,11 @@ describe('raml2obj', () => {
     var resp205;
     before(() => {
       return parser('test/xml.raml')
-      .then(result => raml2obj.parse(result))
+      .then(result => raml2obj.parse({
+        json: result
+      }))
       .then((result) => {
-        obj = result;
+        obj = result.json;
         resp200 = obj.resources[0].methods[0].responses[0].body[0];
         resp205 = obj.resources[0].methods[0].responses[1].body[0];
       });

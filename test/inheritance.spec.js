@@ -9,9 +9,11 @@ describe('raml2obj', () => {
     let properties;
     before(() => {
       return parser('test/inheritance.raml')
-      .then(result => raml2obj.parse(result))
+      .then(result => raml2obj.parse({
+        json: result
+      }))
       .then((result) => {
-        obj = result;
+        obj = result.json;
         properties = obj.resources[0].methods[0].body[0].properties;
       });
     });

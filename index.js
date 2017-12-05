@@ -24,12 +24,22 @@ const {ExpansionLibrary} = require('./lib/expander');
  * - `expandTypes()`
  * - `normalize()`
  *
- * @param {Object} json RALM js parser json output.
- * @return {Promise} Resolved promise to enhanced RAML object.
+ * @param {Object} opts Enhance configuration options
+ * - {Object} json Required. The JSON to enhance
+ * - {Boolean} takeMeasurements - If true then performance will be measured
+ * when enhancing JSON.
+ * @return {Promise} Promise resolved to an object:
+ * - {Object} `json` Enhanced JSON
+ * - {?Array<Object>} `measurement` Only if `takeMeasurements` was set as an option.
+ * Measurement result.
  */
-module.exports.parse = function(json) {
-  const r2o = new RamlJsonEnhancer();
-  return r2o.enhance(json);
+module.exports.parse = function(opts) {
+  opts = opts || {};
+  if (!opts.json) {
+    return Promise.reject(new Error('Required `json` property not found.'));
+  }
+  const r2o = new RamlJsonEnhancer(opts);
+  return r2o.enhance(opts.json);
 };
 
 /**

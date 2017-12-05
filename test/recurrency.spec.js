@@ -10,9 +10,11 @@ describe('raml2obj', () => {
     var obj;
     before(() => {
       return parser('test/raml-example-api-master/api.raml')
-      .then(result => raml2obj.parse(result))
+      .then(result => raml2obj.parse({
+        json: result
+      }))
       .then((result) => {
-        obj = result;
+        obj = result.json;
       });
     });
 

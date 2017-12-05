@@ -10,9 +10,11 @@ describe('raml2obj', () => {
 
     before(() => {
       return parser('test/paths.raml')
-      .then(result => raml2obj.parse(result))
+      .then(result => raml2obj.parse({
+        json: result
+      }))
       .then((result) => {
-        obj = result;
+        obj = result.json;
       });
     });
 
@@ -36,9 +38,11 @@ describe('raml2obj', () => {
 
     before(() => {
       return parser('test/paths-relative.raml')
-      .then(result => raml2obj.parse(result))
+      .then(result => raml2obj.parse({
+        json: result
+      }))
       .then((result) => {
-        obj = result;
+        obj = result.json;
       });
     });
 

@@ -8,9 +8,11 @@ describe('raml2obj', () => {
     var obj;
     before(() => {
       return parser('test/raml-example-api-master/api.raml')
-      .then(result => raml2obj.parse(result))
+      .then(result => raml2obj.parse({
+        json: result
+      }))
       .then((result) => {
-        obj = result;
+        obj = result.json;
       });
     });
 
@@ -194,7 +196,7 @@ describe('raml2obj', () => {
         assert.typeOf(type.properties, 'array');
         assert.lengthOf(type.properties, 9);
 
-        const inner = type.properties[7].properties;
+        const inner = type.properties[6].properties;
         assert.typeOf(inner, 'array');
         assert.lengthOf(inner, 2);
 
@@ -206,6 +208,14 @@ describe('raml2obj', () => {
         assert.typeOf(union.anyOf, 'array');
         assert.lengthOf(union.anyOf, 2);
       });
+    });
+
+    it('properties types are normalized', () => {
+      const union = obj.types['ExampleType.AlterablePerson'];
+      assert.equal(union.anyOf[0].type, 'object');
+
+      const props = union.anyOf[0].properties;
+      assert.equal(props[0].type, 'string');
     });
   });
 });

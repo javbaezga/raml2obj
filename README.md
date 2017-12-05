@@ -39,8 +39,14 @@ parser.loadApi('./api.raml', {
       serializeMetadata: false
     });
 })
-.then(json => raml2obj.parse(json))
-.then(ramlObj => console.log(raml));
+.then(json => raml2obj.parse({
+  json: json,
+  takeMeasurements: true
+}))
+.then(result => {
+  console.log(result.json);
+  console.table(result.measurement);
+});
 ```
 
 ## Building browser version
