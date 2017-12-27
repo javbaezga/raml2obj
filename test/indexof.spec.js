@@ -26,8 +26,8 @@ describe('raml2obj', () => {
     it('should test the GET /test method', () => {
       const GET = obj.resources[0].methods[0];
       const body = GET.body[0];
-      assert.strictEqual(body.type.displayName, 'type');
-      assert.strictEqual(body.type.properties[0].name, 'o1a');
+      assert.equal(body.displayName, 'type');
+      assert.equal(body.properties[0].name, 'o1a');
     });
   });
 });
